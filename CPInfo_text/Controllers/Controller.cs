@@ -15,11 +15,11 @@ namespace CPInfo_text.Controllers
     {
         private Model _model;
         private View _view;
-
+        
         public string JednostkaTemperatury { get; set; }
         public string AktualizacjaInterwalow { get; set; }
         public List<string> KolumnyWyswietlane { get; set; }
-        public List<string> PodzespolyDoMonitorowania { get; set; }
+
 
         public Controller(Model model, View view)
         {
@@ -28,17 +28,7 @@ namespace CPInfo_text.Controllers
             this.JednostkaTemperatury = "°C";
             this.AktualizacjaInterwalow = "1 s";
             this.KolumnyWyswietlane = new List<string>() { "Wartość"};
-            this.PodzespolyDoMonitorowania = new List<string>() 
-            {   
-                "CPU",
-                "Płyta główna",
-                "Pamięć RAM",
-                "Karta graficzna",
-                "Kontroler wentylatorów",
-                "Dyski twarde",
-                "Karty sieciowe",
-                "Bateria"
-            };
+
         }
 
         public void Start()
@@ -84,7 +74,9 @@ namespace CPInfo_text.Controllers
                     ControlerGlowneMenu();
                     break;
                 case "Wybór podzespoółów do monitorowania":
-                    ControlerWyborPodzespolowDoMonitorowania();
+                    ControlerInformacjeOPodzespolach();
+                    ControlerGlowneMenu();
+                    //ControlerWyborPodzespolowDoMonitorowania();  to będzie do usunięcia bo trzeba zrobić coś takiego że używkownik wybiera jaki podzespół chce monitorować i tylko ten monitoruje
                     ControlerGlowneMenu();
                     break;
                 case "Jednostka temperatury":
@@ -128,7 +120,7 @@ namespace CPInfo_text.Controllers
 
         }
 
-        public void ControlerWyborPodzespolowDoMonitorowania()
+        /*public void ControlerWyborPodzespolowDoMonitorowania()
         {
             List<string> listaPodzespolowDoMonitorowania = _view.WidokWyborPodzespolowDoMonitorowania();
             if (listaPodzespolowDoMonitorowania.Contains("Wróć") && listaPodzespolowDoMonitorowania.Count > 1)
@@ -152,7 +144,7 @@ namespace CPInfo_text.Controllers
                 PodzespolyDoMonitorowania.Clear();
                 PodzespolyDoMonitorowania = listaPodzespolowDoMonitorowania;
             }
-        }
+        }*/
 
         public void ControlerJednostkaTemperatury()
         {
@@ -189,7 +181,7 @@ namespace CPInfo_text.Controllers
             }
         }
 
-        public void ControlerInformacjeOPodzespolach()
+        /*public void ControlerInformacjeOPodzespolach()
         {
             //while (true)
             //{
@@ -202,6 +194,37 @@ namespace CPInfo_text.Controllers
                 
             //}
             //_model.Dispose();
+        }*/
+        /*public void ControlerInformacjeOPodzespolach()
+        {
+            _model.DaneCzujnikow();
+            _view.TworzenieTabeli(_model.ListaCzujnikowInfo);
+             bool _wyswietlaniePodzespolow = true;
+
+            while (_wyswietlaniePodzespolow)
+            {
+                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Enter)  
+                {
+                    _wyswietlaniePodzespolow = false;
+                }
+                _model.AktualizacjaCzujnikow();
+                _view.AktualizacjaTabeli(_model.ListaCzujnikowInfo);
+                _view.WyswietlenieTabeli();
+                Thread.Sleep(1000);
+            }
+            _model.Dispose();
+        }*/
+        public void ControlerInformacjeOPodzespolach()
+        {
+            _model.DaneCzujnikow();
+            _view.TworzenieTabeli();
+            _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo);
+            bool wyjscieDoMenu = _view.WyswietlenieTabeli(_model);
+            _model.Dispose();
+            if (wyjscieDoMenu)
+            {
+                ControlerGlowneMenu();
+            }
         }
 
         public int KonverterMilisekundy()

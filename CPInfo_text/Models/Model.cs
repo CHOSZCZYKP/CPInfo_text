@@ -10,92 +10,77 @@ namespace CPInfo_text.Models
     internal class Model
     {
         private Computer _computer;
+        public List<ISensor> ListaCzujnikowInfo { get; set; }
         public Model()
         {
+            this.ListaCzujnikowInfo = new List<ISensor>();
             _computer = new Computer()
             {
                 IsCpuEnabled = true,
-                IsGpuEnabled = true,
+                /*IsGpuEnabled = true,
                 IsMemoryEnabled = true,
                 IsMotherboardEnabled = true,
                 IsNetworkEnabled = true,
                 IsStorageEnabled = true,
-                IsBatteryEnabled = true,
+                IsBatteryEnabled = true,*/
             };
-            _computer.Open();
+            
         }
 
-        public List<CzujnikiInfo> DaneCzujnikow()
+        public void DaneCzujnikow()
         {
-            List<CzujnikiInfo> listaCzujnikowInfo = new List<CzujnikiInfo>();
-
+            //List<CzujnikiInfo> listaCzujnikowInfo = new List<CzujnikiInfo>();
+            _computer.Open();
+            ListaCzujnikowInfo.Clear();
             foreach (var hardware in _computer.Hardware)
             {
                 hardware.Update();
                 foreach (var sensors in hardware.Sensors)
                 {
-                    CzujnikiInfo czujnikiInfo = new CzujnikiInfo();
+                    /*Sensor czujnikiInfo = new CzujnikiInfo();
                     czujnikiInfo.NazwaUrzadzenia = hardware.Name;
                     czujnikiInfo.NazwaCzujnika = sensors.Name;
                     czujnikiInfo.Wartosc = sensors.Value.GetValueOrDefault();
                     czujnikiInfo.TypJednostki = sensors.SensorType.ToString();
                     
 
-                    listaCzujnikowInfo.Add(czujnikiInfo);
+                    ListaCzujnikowInfo.Add(czujnikiInfo);*/
+                    ListaCzujnikowInfo.Add(sensors);
                 }
                 foreach (var subHardware in hardware.SubHardware)
                 {
                     subHardware.Update();
                     foreach (var sensor in subHardware.Sensors)
                     {
-                        CzujnikiInfo czujnikiInfo = new CzujnikiInfo();
+                        /*CzujnikiInfo czujnikiInfo = new CzujnikiInfo();
                         czujnikiInfo.NazwaUrzadzenia = hardware.Name;
                         czujnikiInfo.NazwaCzujnika = sensor.Name;
                         czujnikiInfo.Wartosc = sensor.Value.GetValueOrDefault();
                         czujnikiInfo.TypJednostki = sensor.SensorType.ToString();
 
 
-                        listaCzujnikowInfo.Add(czujnikiInfo);
+                        ListaCzujnikowInfo.Add(czujnikiInfo);*/
+                        ListaCzujnikowInfo.Add(sensor);
                     }
                 }
 
-                //dorobić jeszcze dla ukrytych
             }
 
-            return listaCzujnikowInfo;
+            //return listaCzujnikowInfo;
         }
         public void Dispose()
         {
             _computer.Close();
         }
-        public void PodzespolyWyswietlane(List<string> listaPodzespolow)
-        {
-            foreach (var podzespol in listaPodzespolow)
-            {
-                
-            }
 
-            /*"CPU",
-                    "Płyta główna",
-                    "Pamięć RAM",
-                    "Karta graficzna",
-                    "Kontroler wentylatorów",
-                    "Dyski twarde",
-                    "Karty sieciowe",
-                    "Bateria",*/
-        }
-
-        public string KonverterJednostekEnum(SensorType sensorType)
+        public void AktualizacjaCzujnikow()
         {
-            switch (sensorType)
+            foreach (var hardware in _computer.Hardware)
             {
-                case SensorType.Voltage:
-                    return "V";
-                case SensorType.Temperature:
-                    return "℃";
-                default:
-                    return null;
+                hardware.Update();
             }
         }
+
+        
     }
 }

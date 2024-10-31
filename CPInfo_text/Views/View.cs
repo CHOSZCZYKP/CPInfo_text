@@ -1,17 +1,20 @@
 ﻿using CPInfo_text.Models;
+using LibreHardwareMonitor.Hardware;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CPInfo_text.Views
 {
     internal class View
     {
-
+        private Table _table;
         public void TytulAplikacji()
         {
             string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
@@ -26,6 +29,7 @@ namespace CPInfo_text.Views
 
         public string WidokGlowneMenu()
         {
+            AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Wybierz opcję:")
@@ -40,7 +44,7 @@ namespace CPInfo_text.Views
             );
 
             AnsiConsole.Clear();
-            System.Threading.Thread.Sleep(100);
+            //System.Threading.Thread.Sleep(100);
             return wybor;
         }
         public string WidokUstawienia()
@@ -179,21 +183,91 @@ namespace CPInfo_text.Views
 
             return potwierdzenie;
         }
-        public void WidokInformacjiOPodzespolach(List<CzujnikiInfo> czujnikiInfos)
-        {
-            var tabela = new Table();
-            tabela.AddColumn("Urządzenie");
-            tabela.AddColumn("Nazwa czujnika");
-            tabela.AddColumn("Wartość");
-            tabela.AddColumn("Typ jednostki");
 
-            foreach (var item in czujnikiInfos)
+
+        public void TworzenieTabeli()
+        {
+            _table = new Table();
+            _table.AddColumn("Urządzenie");
+            _table.AddColumn("Nazwa czujnika");
+            _table.AddColumn("Wartość");
+            _table.AddColumn("Typ jednostki");
+        }
+        public void InicjalizacjaTabeli(List<ISensor> czujnikiInfos)
+        {
+            /*foreach (var item in czujnikiInfos)
             {
-                tabela.AddRow(item.NazwaUrzadzenia, item.NazwaCzujnika, item.Wartosc.ToString(), item.TypJednostki);
+                _table.AddRow(item.NazwaUrzadzenia, item.NazwaCzujnika, item.Wartosc.ToString(), item.TypJednostki);
+            }*/
+            foreach (var sensor in czujnikiInfos)
+            {
+                _table.AddRow(sensor.Name, sensor.SensorType.ToString(), sensor.Value.HasValue ? $"{sensor.Value:F1} °C" : "Brak danych");
             }
-            AnsiConsole.Write(tabela);
         }
 
-        
+        public void AktualizacjaTabeli(List<ISensor> czujnikiInfos)
+        {
+            for (int i = 0; i < czujnikiInfos.Count; i++)
+            {
+                var sensor = czujnikiInfos[i];
+                //_table.UpdateCell(i, 2, sensor.Wartosc.ToString());
+                _table.UpdateCell(i, 2, sensor.Value.HasValue ? $"{sensor.Value:F1} °C" : "Brak danych");
+            }
+            /*int i = 0;
+            foreach (var czujnik in czujnikiInfos)
+            {
+                _table.UpdateCell(i, 2, czujnik.Wartosc.ToString());
+                i++;
+            }*/
+        }
+
+        /*public void WyswietlenieTabeli(Model model)
+        {
+            AnsiConsole.Live(_table)
+                .Start(x =>
+                {
+                    /*model.AktualizacjaCzujnikow();
+                    AktualizacjaTabeli(model.ListaCzujnikowInfo);
+                    x.Refresh();
+                    Thread.Sleep(1000);*/
+        /*while (true) // Dodajemy pętlę, aby kontynuować odświeżanie danych
+        {
+            model.AktualizacjaCzujnikow();
+            AktualizacjaTabeli(model.ListaCzujnikowInfo);
+            x.Refresh();
+            Thread.Sleep(1000);
+            if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
+            {
+                return;
+            }
+        }
+    });
+}*/
+
+        public bool WyswietlenieTabeli(Model model)
+        {
+            bool check = false;
+            AnsiConsole.Live(_table)
+                .Start(x =>
+                {
+                    AnsiConsole.Markup("[yellow]Naciśnij [bold]Q[/] aby zatrzymać wyświetlanie tabeli.[/]\n");
+                    while (true)
+                    {
+                        model.AktualizacjaCzujnikow();
+                        AktualizacjaTabeli(model.ListaCzujnikowInfo);
+                        x.Refresh();
+                        Thread.Sleep(1000);
+                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
+                        {
+                            AnsiConsole.Clear();
+                            check = true;
+                            break;
+                        }
+                    }
+                });
+            return check;
+        }
+
+
     }
 }
