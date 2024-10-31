@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CPInfo_text.Controllers
@@ -18,8 +20,6 @@ namespace CPInfo_text.Controllers
         public string AktualizacjaInterwalow { get; set; }
         public List<string> KolumnyWyswietlane { get; set; }
         public List<string> PodzespolyDoMonitorowania { get; set; }
-
-        //zrobić na gotowo ustawienia
 
         public Controller(Model model, View view)
         {
@@ -56,7 +56,7 @@ namespace CPInfo_text.Controllers
                     ControlerUstawienia();
                     break;
                 case "Informacje o podzespołach":
-
+                    ControlerInformacjeOPodzespolach();
                     break;
                 case "Czyszczenie dysku":
 
@@ -186,6 +186,46 @@ namespace CPInfo_text.Controllers
             if (wyborInformacjeOProgramie.Equals("Wróć"))
             {
                 ControlerGlowneMenu();
+            }
+        }
+
+        public void ControlerInformacjeOPodzespolach()
+        {
+            //while (true)
+            //{
+                AnsiConsole.Clear();
+                List<CzujnikiInfo> listaCzujnikowInfo = _model.DaneCzujnikow();
+                _view.WidokInformacjiOPodzespolach(listaCzujnikowInfo);
+            Console.ReadKey();
+                //Thread.Sleep(KonverterMilisekundy());
+                
+                
+            //}
+            //_model.Dispose();
+        }
+
+        public int KonverterMilisekundy()
+        {
+            var regex = new Regex(@"(\d+)\s*(ms|s)", RegexOptions.IgnoreCase);
+            var dopasowanie = regex.Match(AktualizacjaInterwalow);
+
+            if (dopasowanie.Success)
+            {
+                int wartosc = int.Parse(dopasowanie.Groups[1].Value);
+                string jednostka = dopasowanie.Groups[2].Value.ToLower();
+
+                if (jednostka == "ms")
+                {
+                    return wartosc;
+                }
+                else
+                {
+                    return wartosc * 1000;
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Nieprawidłowy format: {AktualizacjaInterwalow}");
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using CPInfo_text.Models;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,7 @@ namespace CPInfo_text.Views
             );
 
             AnsiConsole.Clear();
+            System.Threading.Thread.Sleep(100);
             return wybor;
         }
         public string WidokUstawienia()
@@ -81,28 +83,10 @@ namespace CPInfo_text.Views
                     "Wróć"
                 })
             );
-            //to już będzie kontroler zarządzał
 
             AnsiConsole.Clear();
             return wyborPodzespolowDoMoniotorwania;
         }
-        /*public string WidokWidok()
-        {
-            var wybor = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Widok")
-                .PageSize(3)
-                .AddChoices(new[]
-                {
-                    "Reset MIN/MAX",
-                    "Wyświetlanie kolumny",
-                    "Wróć"
-                })
-            );
-
-            AnsiConsole.Clear();
-            return wybor;
-        }*/
 
         public List<string> WidokKolumny()
         {
@@ -118,38 +102,9 @@ namespace CPInfo_text.Views
                     "Wróć",
                 })
             );
-            //to już będzie kontroler zarządzał
             AnsiConsole.Clear();
             return wyborKolumn;
         }
-
-        /*public void WidokOpcje()
-        {
-            var wybor = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Opcje")
-                .PageSize(3)
-                .AddChoices(new[]
-                {
-                    "Jednostka temperatury",
-                    "Aktualizacja interwałów",
-                    "Wróć"
-                })
-            );
-            switch(wybor)
-            {
-                case "Jednostka temperatury":
-                    WidokTemperatur(); 
-                    break;
-                case "Aktualizacja interwałów":
-                    WidokAktualizacjaInterwalow();
-                    break;
-                case "Wróć":
-                    WidokGlowneMenu();
-                    break;
-            }
-            AnsiConsole.Clear();
-        }*/
 
         public string WidokTemperatur()
         {
@@ -224,5 +179,21 @@ namespace CPInfo_text.Views
 
             return potwierdzenie;
         }
+        public void WidokInformacjiOPodzespolach(List<CzujnikiInfo> czujnikiInfos)
+        {
+            var tabela = new Table();
+            tabela.AddColumn("Urządzenie");
+            tabela.AddColumn("Nazwa czujnika");
+            tabela.AddColumn("Wartość");
+            tabela.AddColumn("Typ jednostki");
+
+            foreach (var item in czujnikiInfos)
+            {
+                tabela.AddRow(item.NazwaUrzadzenia, item.NazwaCzujnika, item.Wartosc.ToString(), item.TypJednostki);
+            }
+            AnsiConsole.Write(tabela);
+        }
+
+        
     }
 }
