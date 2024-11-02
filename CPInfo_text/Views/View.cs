@@ -29,7 +29,6 @@ namespace CPInfo_text.Views
 
         public string WidokGlowneMenu()
         {
-            AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Wybierz opcję:")
@@ -57,7 +56,7 @@ namespace CPInfo_text.Views
                 {
                     "Reset MIN/MAX",
                     "Wyświetlanie kolumny",
-                    "Wybór podzespoółów do monitorowania",
+                    //"Wybór podzespoółów do monitorowania",
                     "Jednostka temperatury",
                     "Aktualizacja interwałów",
                     "Wróć"
@@ -68,10 +67,10 @@ namespace CPInfo_text.Views
             return wybor;
         }
         
-        public List<string> WidokWyborPodzespolowDoMonitorowania()
+        public string WidokWyborPodzespoluDoMonitorowania()
         {
-            var wyborPodzespolowDoMoniotorwania = AnsiConsole.Prompt(
-                new MultiSelectionPrompt<string>()
+            var wyborPodzespoluDoMoniotorwania = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
                 .Title("Wybierz które podzespoły chcesz monitorować:")
                 .PageSize(9)
                 .AddChoices(new[]
@@ -80,7 +79,6 @@ namespace CPInfo_text.Views
                     "Płyta główna",
                     "Pamięć RAM",
                     "Karta graficzna",
-                    "Kontroler wentylatorów",
                     "Dyski twarde",
                     "Karty sieciowe",
                     "Bateria",
@@ -89,7 +87,7 @@ namespace CPInfo_text.Views
             );
 
             AnsiConsole.Clear();
-            return wyborPodzespolowDoMoniotorwania;
+            return wyborPodzespoluDoMoniotorwania;
         }
 
         public List<string> WidokKolumny()
@@ -184,7 +182,7 @@ namespace CPInfo_text.Views
             return potwierdzenie;
         }
 
-
+        
         public void TworzenieTabeli()
         {
             _table = new Table();
@@ -201,7 +199,9 @@ namespace CPInfo_text.Views
             }*/
             foreach (var sensor in czujnikiInfos)
             {
-                _table.AddRow(sensor.Name, sensor.SensorType.ToString(), sensor.Value.HasValue ? $"{sensor.Value:F1} °C" : "Brak danych");
+                //_table.AddRow(sensor.Name, sensor.SensorType.ToString(), sensor.Value.HasValue ? $"{sensor.Value:F1} °C" : "Brak danych", sensor.Hardware.Name);
+                //_table.AddRow(sensor.NazwaUrzadzenia, sensor.NazwaCzujnika, sensor.Wartosc.ToString(), HelperKonwerter.KonwerterTypuNaJednostke(sensor.TypJednostki));
+                _table.AddRow(sensor.Hardware.Name, sensor.Name, sensor.Value.GetValueOrDefault().ToString(), HelperKonwerter.KonwerterTypuNaJednostke(sensor.SensorType));
             }
         }
 
@@ -211,7 +211,7 @@ namespace CPInfo_text.Views
             {
                 var sensor = czujnikiInfos[i];
                 //_table.UpdateCell(i, 2, sensor.Wartosc.ToString());
-                _table.UpdateCell(i, 2, sensor.Value.HasValue ? $"{sensor.Value:F1} °C" : "Brak danych");
+                _table.UpdateCell(i, 2, sensor.Value.ToString());
             }
             /*int i = 0;
             foreach (var czujnik in czujnikiInfos)
@@ -265,6 +265,7 @@ namespace CPInfo_text.Views
                         }
                     }
                 });
+            AnsiConsole.Clear();
             return check;
         }
 

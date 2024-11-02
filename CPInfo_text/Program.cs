@@ -16,7 +16,7 @@ namespace CPInfo_text
     {
         static void Main(string[] args)
         {
-            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
             View view = new View();
             Model model = new Model();
             Controller controller = new Controller(model, view);

@@ -46,7 +46,8 @@ namespace CPInfo_text.Controllers
                     ControlerUstawienia();
                     break;
                 case "Informacje o podzespołach":
-                    ControlerInformacjeOPodzespolach();
+                    ControlerWyborPodzespoluDoMonitorowania();
+                    //ControlerInformacjeOPodzespolach();
                     break;
                 case "Czyszczenie dysku":
 
@@ -56,7 +57,7 @@ namespace CPInfo_text.Controllers
                     ControlerInformacjeOProgramie();
                     break;
                 case "Wyjdź":
-
+                    _model.Dispose();
                     return;
             }
         }
@@ -73,12 +74,12 @@ namespace CPInfo_text.Controllers
                     ControlerWyswietlanieKolumny();
                     ControlerGlowneMenu();
                     break;
-                case "Wybór podzespoółów do monitorowania":
-                    ControlerInformacjeOPodzespolach();
-                    ControlerGlowneMenu();
+                //case "Wybór podzespoółów do monitorowania":
+                    //ControlerInformacjeOPodzespolach();
+                    //ControlerGlowneMenu();
                     //ControlerWyborPodzespolowDoMonitorowania();  to będzie do usunięcia bo trzeba zrobić coś takiego że używkownik wybiera jaki podzespół chce monitorować i tylko ten monitoruje
-                    ControlerGlowneMenu();
-                    break;
+                    //ControlerGlowneMenu();
+                    //break;
                 case "Jednostka temperatury":
                     ControlerJednostkaTemperatury();
                     ControlerGlowneMenu();
@@ -92,6 +93,22 @@ namespace CPInfo_text.Controllers
                     break;
             }
         }
+
+        public void ControlerWyborPodzespoluDoMonitorowania()
+        {
+            string wyborPodzespolu = _view.WidokWyborPodzespoluDoMonitorowania();
+
+            if (wyborPodzespolu.Equals("Wróć"))
+            {
+                ControlerGlowneMenu();
+            }
+            else
+            {
+                ControlerInformacjeOPodzespolach(wyborPodzespolu);
+
+            }
+        }
+
         
         public void ControlerWyswietlanieKolumny()
         {
@@ -214,15 +231,16 @@ namespace CPInfo_text.Controllers
             }
             _model.Dispose();
         }*/
-        public void ControlerInformacjeOPodzespolach()
+        public void ControlerInformacjeOPodzespolach(string wyborPodzespolu)
         {
-            _model.DaneCzujnikow();
+            _model.DaneCzujnikow(wyborPodzespolu);
             _view.TworzenieTabeli();
             _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo);
             bool wyjscieDoMenu = _view.WyswietlenieTabeli(_model);
-            _model.Dispose();
+            //_model.Dispose();
             if (wyjscieDoMenu)
             {
+                _model.WylaczenieWszystkichPodzespolow();
                 ControlerGlowneMenu();
             }
         }
@@ -251,5 +269,6 @@ namespace CPInfo_text.Controllers
                 throw new ArgumentException($"Nieprawidłowy format: {AktualizacjaInterwalow}");
             }
         }
+
     }
 }
