@@ -9,12 +9,12 @@ namespace CPInfo_text.Models
 {
     internal class HelperKonwerter
     {
-        public static string KonwerterTypuNaJednostke(SensorType sensorType)
+        public static string KonwerterTypuNaJednostke(SensorType sensorType, string jednostkaTemperatury)
         {
             switch (sensorType)
             {
                 case SensorType.Temperature:
-                    return "Stopnie C lub F";
+                    return jednostkaTemperatury;
                 case SensorType.Voltage:
                     return "V";
                 case SensorType.Load:
@@ -36,23 +36,28 @@ namespace CPInfo_text.Models
                 case SensorType.Level:
                     return "%";
                 case SensorType.Factor:
-                    return "Factor";
+                    return "";
                 case SensorType.Data:
                     return "GB";
                 case SensorType.SmallData:
-                    return "SmallData";
+                    return "MB";
                 case SensorType.Throughput:
-                    return "KB/s";
+                    return "B/s";
                 case SensorType.TimeSpan:
-                    return "TimeSpan";
+                    return "s";
                 case SensorType.Energy:
-                    return "Energy";
+                    return "J";
                 case SensorType.Noise:
-                    return "Noise";
+                    return "dB";
                 default:
                     return "";
             }
 
+        }
+
+        public static float KonwerterCelciuszNaFahrennheit(float temperaturaC)
+        {
+            return (float)(temperaturaC * 1.8) + 32;
         }
     }
 }

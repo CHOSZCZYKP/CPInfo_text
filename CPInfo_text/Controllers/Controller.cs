@@ -67,19 +67,10 @@ namespace CPInfo_text.Controllers
             string wyborUstawienia = _view.WidokUstawienia();
             switch (wyborUstawienia)
             {
-                case "Reset MIN/MAX":
-                    AnsiConsole.WriteLine("W budowie...");
-                    break;
                 case "Wyświetlanie kolumny":
                     ControlerWyswietlanieKolumny();
                     ControlerGlowneMenu();
                     break;
-                //case "Wybór podzespoółów do monitorowania":
-                    //ControlerInformacjeOPodzespolach();
-                    //ControlerGlowneMenu();
-                    //ControlerWyborPodzespolowDoMonitorowania();  to będzie do usunięcia bo trzeba zrobić coś takiego że używkownik wybiera jaki podzespół chce monitorować i tylko ten monitoruje
-                    //ControlerGlowneMenu();
-                    //break;
                 case "Jednostka temperatury":
                     ControlerJednostkaTemperatury();
                     ControlerGlowneMenu();
@@ -104,8 +95,8 @@ namespace CPInfo_text.Controllers
             }
             else
             {
-                ControlerInformacjeOPodzespolach(wyborPodzespolu);
-
+                //ControlerInformacjeOPodzespolach(wyborPodzespolu);
+                ControlerInformacjeOPodzespolachAllData(wyborPodzespolu);
             }
         }
 
@@ -235,9 +226,33 @@ namespace CPInfo_text.Controllers
         {
             _model.DaneCzujnikow(wyborPodzespolu);
             _view.TworzenieTabeli();
-            _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo);
-            bool wyjscieDoMenu = _view.WyswietlenieTabeli(_model);
+            _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo, JednostkaTemperatury);
+            int czasOdswiezania = KonverterMilisekundy();
+            bool wyjscieDoMenu = _view.WyswietlenieTabeli(_model, czasOdswiezania);
             //_model.Dispose();
+            if (wyjscieDoMenu)
+            {
+                _model.WylaczenieWszystkichPodzespolow();
+                ControlerGlowneMenu();
+            }
+        }
+
+        public void ControlerInformacjeOPodzespolachAllData(string wyborPodzespolu)
+        {
+            _model.DaneCzujnikow(wyborPodzespolu);
+            _view.TworzenieTabeliAllData(KolumnyWyswietlane);
+
+            /*foreach (var sensor in _model.ListaCzujnikowInfo)
+            {
+                if (sensor.SensorType == LibreHardwareMonitor.Hardware.SensorType.Temperature)
+                {   
+                    //sensor.Value = HelperKonwerter.KonwerterCelciuszNaFahrennheit(sensor.Value.GetValueOrDefault());
+                }
+            }*/
+
+            _view.InicjalizacjaTabeliAllData(_model.ListaCzujnikowInfo, KolumnyWyswietlane, JednostkaTemperatury);
+            int czasOdswiezania = KonverterMilisekundy();
+            bool wyjscieDoMenu = _view.WyswietlanieTabeliAllData(_model, czasOdswiezania, KolumnyWyswietlane, JednostkaTemperatury);
             if (wyjscieDoMenu)
             {
                 _model.WylaczenieWszystkichPodzespolow();
