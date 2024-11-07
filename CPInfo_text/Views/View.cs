@@ -36,7 +36,13 @@ namespace CPInfo_text.Views
                 .Title("Wybierz opcję:")
                 .PageSize(5)
                 .AddChoices(new[] {
-                    "Ustawienia",
+                    //"Ustawienia",
+                    @" ____ ___         __                .__              .__        
+|    |   \_______/  |______ __  _  _|__| ____   ____ |__|____   
+|    |   /  ___/\   __\__  \\ \/ \/ /  |/ __ \ /    \|  \__  \  
+|    |  /\___ \  |  |  / __ \\     /|  \  ___/|   |  \  |/ __ \_
+|______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
+             \/            \/               \/     \/        \/ ",
                     "Informacje o podzespołach",//dodać jescze opcję jakipodzespół ma jaki sterownik
                     "Czyszczenie dysku",
                     "Informacje",

@@ -1,107 +1,16 @@
-﻿using System;
+﻿using LibreHardwareMonitor.Hardware;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CPInfo_text.Models
 {
-    class Helper
+    internal class SpecyfikacjaKomputera
     {
-        //to działa opróżnia kosz systemowy
-        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern int SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
-
-        private enum RecycleFlags : uint
-        {
-            SHERB_NOCONFIRMATION = 0x00000001, // Bez potwierdzenia
-            SHERB_NOPROGRESSUI = 0x00000002,   // Bez okna postępu
-            SHERB_NOSOUND = 0x00000004         // Bez dźwięku
-        }
-        public static void EmptyRecycleBin()
-        {
-            // Wywołujemy funkcję SHEmptyRecycleBin, ustawiając odpowiednie flagi
-            int result = SHEmptyRecycleBin(IntPtr.Zero, null, RecycleFlags.SHERB_NOCONFIRMATION | RecycleFlags.SHERB_NOPROGRESSUI | RecycleFlags.SHERB_NOSOUND);
-
-            // Sprawdzamy, czy operacja się powiodła
-            if (result != 0)
-            {
-                throw new InvalidOperationException("Nie udało się opróżnić Kosza. Kod błędu: " + result);
-            }
-            else
-            {
-                Console.WriteLine("Kosz został opróżniony.");
-            }
-        }
-
-
-        public static void UswuaniePlikowTymczasowych()
-        {
-            // Pobierz ścieżkę do katalogu tymczasowego
-            string tempPath = Path.GetTempPath();
-            
-            Console.WriteLine($"Czyszczenie katalogu: {tempPath}\n");
-
-            try
-            {
-                // Wywołaj metodę do usunięcia plików tymczasowych
-                DeleteTemporaryFiles(tempPath);
-                Console.WriteLine("\nCzyszczenie zakończone.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-            }
-        }
-
-        private static void DeleteTemporaryFiles(string path)
-        {
-            // Sprawdź czy katalog istnieje
-            if (Directory.Exists(path))
-            {
-                // Usuń wszystkie pliki w katalogu
-                foreach (string file in Directory.GetFiles(path))
-                {
-                    try
-                    {
-                        File.Delete(file);
-                        Console.WriteLine($"Usunięto plik: {file}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Nie udało się usunąć pliku {file}: {ex.Message}");
-                    }
-                }
-
-                // Przejdź przez wszystkie podkatalogi i usuń pliki w każdym z nich
-                foreach (string dir in Directory.GetDirectories(path))
-                {
-                    try
-                    {
-                        // Rekurencyjne czyszczenie podkatalogów
-                        DeleteTemporaryFiles(dir);
-                        // Usuń pusty podkatalog
-                        Directory.Delete(dir);
-                        Console.WriteLine($"Usunięto katalog: {dir}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Nie udało się usunąć katalogu {dir}: {ex.Message}");
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Katalog {path} nie istnieje.");
-            }
-        }
-    }
-    internal class DoTestu
-    {
-        static void WyświetlanieProcesora()
+        public void WyświetlanieProcesora()
         {
             Console.WriteLine("Informacje o procesorze");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_Processor"))
@@ -116,15 +25,10 @@ namespace CPInfo_text.Models
                         }
 
                     }
-                    /*Console.WriteLine($"Model procesora: {obj["Name"]}");
-                    Console.WriteLine($"Producent: {obj["Manufacturer"]}");
-                    Console.WriteLine($"Liczba rdzeni: {obj["NumberOfCores"]}");
-                    Console.WriteLine($"Liczba wątków: {obj["NumberOfLogicalProcessors"]}");
-                    Console.WriteLine($"Maksymalna częstotliwość: {obj["MaxClockSpeed"]} MHz");*/
                 }
             }
         }
-        static void WyświetlaniePlytyGlownej()
+        public void WyświetlaniePlytyGlownej()
         {
             Console.WriteLine("Informacje o płycie głównej");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_BaseBoard"))
@@ -141,7 +45,7 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieRAM()
+        public void WyświetlanieRAM()
         {
             Console.WriteLine("Inforamcje o RAM");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
@@ -170,7 +74,7 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieGPU()
+        public void WyświetlanieGPU()
         {
             //zrobić coś taiego że jeśli za wartość adapterRam wstawię wartość totali z libre hardwareMonitor
             Console.WriteLine("Informacje o karcie graficznej");
@@ -184,7 +88,21 @@ namespace CPInfo_text.Models
                         {
                             if (property.Name.Equals("AdapterRAM"))
                             {
-                                Console.WriteLine($"{property.Name}: {(UInt64)Convert.ToInt64(obj["AdapterRAM"]) / (1024 * 1024)} MB");
+                                Computer computer = new Computer();
+                                computer.IsGpuEnabled = true;
+                                computer.Open();
+                                foreach (var hardware in computer.Hardware)
+                                {
+                                    foreach (var sensor in hardware.Sensors)
+                                    {
+                                        if (sensor.Name.Equals("GPU Memory Total"))
+                                        {
+                                            Console.WriteLine($"{property.Name}: {sensor.Value.GetValueOrDefault()}");
+                                        }
+                                    }
+                                }
+                                computer.Close();
+                                //Console.WriteLine($"{property.Name}: {(UInt64)Convert.ToInt64(obj["AdapterRAM"]) / (1024 * 1024)} MB");
                             }
                             else
                             {
@@ -196,7 +114,7 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieDysku()
+        public void WyświetlanieDysku()
         {
             Console.WriteLine("Informacje o dyskach");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_DiskDrive"))
@@ -221,10 +139,10 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieKartSieciowych()
+        public void WyświetlanieKartSieciowych()
         {
             Console.WriteLine("Informacje o kartach sieciowych");
-            using (var searcher = new ManagementObjectSearcher("select * from Win32_NetworkAdapter  where NetEnabled=true"))// where NetEnabled=true jeśli chcę żeby były widoczne tylko te które są włączone
+            using (var searcher = new ManagementObjectSearcher("select * from Win32_NetworkAdapter  where NetEnabled=true"))
             {
                 int licznik = 1;
                 foreach (var obj in searcher.Get())
@@ -241,7 +159,7 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieSystemu()
+        public void WyświetlanieSystemu()
         {
             Console.WriteLine("Informacje o systemie");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_OperatingSystem"))
@@ -258,7 +176,7 @@ namespace CPInfo_text.Models
                 }
             }
         }
-        static void WyświetlanieBios()
+        public void WyświetlanieBios()
         {
             Console.WriteLine("Informacje o BIOS-ie");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_BIOS"))

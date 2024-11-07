@@ -42,7 +42,12 @@ namespace CPInfo_text.Controllers
             string wyborMenuGlowne = _view.WidokGlowneMenu();
             switch (wyborMenuGlowne)
             {
-                case "Ustawienia":
+                case @" ____ ___         __                .__              .__        
+|    |   \_______/  |______ __  _  _|__| ____   ____ |__|____   
+|    |   /  ___/\   __\__  \\ \/ \/ /  |/ __ \ /    \|  \__  \  
+|    |  /\___ \  |  |  / __ \\     /|  \  ___/|   |  \  |/ __ \_
+|______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
+             \/            \/               \/     \/        \/ ":
                     ControlerUstawienia();
                     break;
                 case "Informacje o podzespołach":
