@@ -12,7 +12,9 @@ namespace CPInfo_text.Models
         public string NazwaUrzadzenia { get; set; }
         public string NazwaCzujnika { get; set; }
         public SensorType TypJednostki { get; set; }
-        public float Wartosc { get; set; }
+        public string Wartosc { get; set; }
+        public string Min { get; set; }
+        public string Max { get; set; }
 
         /*public string KonwerterTypuNaJednostke(SensorType sensorType)
         {

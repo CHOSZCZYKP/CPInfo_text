@@ -17,6 +17,7 @@ namespace CPInfo_text.Views
     {
         private Table _table;
         private Table _tableAllData;
+
         public void TytulAplikacji()
         {
             string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
@@ -31,10 +32,11 @@ namespace CPInfo_text.Views
 
         public string WidokGlowneMenu()
         {
+            AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .Title("Wybierz opcję:")
-                .PageSize(5)
+                .PageSize(6)
                 .AddChoices(new[] {
                     //"Ustawienia",
                     @" ____ ___         __                .__              .__        
@@ -44,6 +46,7 @@ namespace CPInfo_text.Views
 |______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
              \/            \/               \/     \/        \/ ",
                     "Informacje o podzespołach",//dodać jescze opcję jakipodzespół ma jaki sterownik
+                    "Pobierz specyfikacje komputera",
                     "Czyszczenie dysku",
                     "Informacje",
                     "Wyjdź" 
@@ -214,23 +217,39 @@ namespace CPInfo_text.Views
             {
                 _tableAllData.AddColumn("MAX");
             }
-            _tableAllData.AddColumn("Typ jednostki");
+            //_tableAllData.AddColumn("Typ jednostki");
         }
 
-        public void InicjalizacjaTabeli(List<ISensor> czujnikiInfos, string jednostkaTemperatury)
+        /*public void InicjalizacjaTabeli(List<ISensor> czujnikiInfos, string jednostkaTemperatury)
         {
             foreach (var sensor in czujnikiInfos)
             {  
                 _table.AddRow(sensor.Hardware.Name, sensor.Name, sensor.Value.GetValueOrDefault().ToString(), HelperKonwerter.KonwerterTypuNaJednostke(sensor.SensorType, jednostkaTemperatury));
             }
-        }
+        }*/
 
-        public void InicjalizacjaTabeliAllData(List<ISensor> czujnikiInfos, List<string> listaKolumn, string jednostkaTemperatury)
+        public void InicjalizacjaTabeliAllData(List<CzujnikiInfo> czujnikiInfos, List<string> listaKolumn, string jednostkaTemperatury)
         {
             foreach (var sensor in czujnikiInfos)
             {
                 List<string> data = new List<string>();
-                data.Add(sensor.Hardware.Name);
+                data.Add(sensor.NazwaUrzadzenia);
+                data.Add(sensor.NazwaCzujnika);
+                if (listaKolumn.Contains("Wartość"))
+                {
+                    data.Add(sensor.Wartosc);
+                }
+                if (listaKolumn.Contains("Min"))
+                {
+                    data.Add(sensor.Min);
+                }
+                if (listaKolumn.Contains("Max"))
+                {
+                    //data.Add(sensor.Max?.ToString() ?? "");
+                    data.Add(sensor.Max);
+                }
+                //data.Add(sensor.TypJednostki.ToString());
+                /*data.Add(sensor.Hardware.Name);
                 data.Add(sensor.Name);
                 if (listaKolumn.Contains("Wartość"))
                 {
@@ -246,11 +265,13 @@ namespace CPInfo_text.Views
                     data.Add(sensor.Max.GetValueOrDefault().ToString());
                 }
                 data.Add(HelperKonwerter.KonwerterTypuNaJednostke(sensor.SensorType, jednostkaTemperatury));
+                _tableAllData.AddRow(data.ToArray());*/
+                //data.Add(HelperKonwerter.KonwerterTypuNaJednostke(sensor.TypJednostki, jednostkaTemperatury));
                 _tableAllData.AddRow(data.ToArray());
             }
         }
 
-        public void AktualizacjaTabeli(List<ISensor> czujnikiInfos)
+        /*public void AktualizacjaTabeli(List<ISensor> czujnikiInfos)
         {
             for (int i = 0; i < czujnikiInfos.Count; i++)
             {
@@ -259,14 +280,34 @@ namespace CPInfo_text.Views
                 _table.UpdateCell(i, 2, sensor.Value.ToString());
             }
 
-        }
+        }*/
 
 
 
         //tą całą metodę prawdopodobnie będę musiał przerobić i przenieść do kontrolera
-        public void AktualizacjaTabeliAllData(List<ISensor> czujnikiInfos, List<string> listaKolumn, string jednostkaTemperatury) 
+        public void AktualizacjaTabeliAllData(List<CzujnikiInfo> czujnikiInfos, List<string> listaKolumn) //, string jednostkaTemperatury
         {
             for (int i = 0; i < czujnikiInfos.Count; i++)
+            {
+                var sensor = czujnikiInfos[i];
+                int liczbaKolumn = 2;
+        
+                if (listaKolumn.Contains("Wartość"))
+                {
+                    _tableAllData.UpdateCell(i, liczbaKolumn, sensor.Wartosc.ToString());
+                    liczbaKolumn++;
+                }
+                if (listaKolumn.Contains("Min"))
+                {
+                    _tableAllData.UpdateCell(i, liczbaKolumn, sensor.Min.ToString());
+                    liczbaKolumn++;
+                }
+                if (listaKolumn.Contains("Max"))
+                {
+                    _tableAllData.UpdateCell(i, liczbaKolumn, sensor.Max.ToString());
+                }
+            }
+            /*for (int i = 0; i < czujnikiInfos.Count; i++)
             {
                 var sensor = czujnikiInfos[i];
                 int liczbaKolumn = 2;
@@ -310,10 +351,10 @@ namespace CPInfo_text.Views
                     
                 }
                 
-            }
+            }*/
         }
 
-        public bool WyswietlenieTabeli(Model model, int czasOdswiezania)
+        /*public bool WyswietlenieTabeli(Model model, int czasOdswiezania)
         {
             bool check = false;
             AnsiConsole.Live(_table)
@@ -336,11 +377,11 @@ namespace CPInfo_text.Views
                 });
             AnsiConsole.Clear();
             return check;
-        }
+        }*/
 
-        public bool WyswietlanieTabeliAllData(Model model, int czasOdswiezania, List<string> lisaKolumn, string jednostkaTemperatury)
+        public bool WyswietlanieTabeliAllData(Model model, int czasOdswiezania, List<string> lisaKolumn, string jednostkaTemperatury)//, string jednostkaTemperatury
         {
-            bool check = false;
+            /*bool check = false;
             AnsiConsole.Live(_tableAllData)
                 .Start(x =>
                 {
@@ -372,7 +413,87 @@ namespace CPInfo_text.Views
                     }
                 });
             AnsiConsole.Clear();
+            return check;*/
+            bool check = false;
+            AnsiConsole.Live(_tableAllData)
+                .Start(x =>
+                {
+                    //to spróbować przenieść do kontrolera chociaż to jeszcze przemyśle
+                    int liczbaSensorow = model.ListaCzujnikowInfo.Count;
+                    if (liczbaSensorow > 0)
+                    {
+                        CzujnikiInfo sensor = model.ListaCzujnikowInfo.First();
+                        AnsiConsole.Markup($"[yellow]Naciśnij [bold]Q[/] aby zatrzymać wyświetlanie tabeli.[/]\n[red]{sensor.NazwaUrzadzenia ?? ""}[/]\n");
+                    }
+                    else
+                    {
+                        AnsiConsole.Markup($"[yellow]Naciśnij [bold]Q[/] aby zatrzymać wyświetlanie tabeli.[/]\n[red]Nie wykryto urządzenia[/]\n");
+                    }
+
+                    while (true)
+                    {
+                        model.AktualizacjaCzujnikow(jednostkaTemperatury);
+
+                        AktualizacjaTabeliAllData(model.ListaCzujnikowInfo, lisaKolumn);//, jednostkaTemperatury
+                        x.Refresh();
+                        Thread.Sleep(czasOdswiezania);
+                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
+                        {
+                            AnsiConsole.Clear();
+                            check = true;
+                            break;
+                        }
+                    }
+                });
+            AnsiConsole.Clear();
             return check;
+        }
+
+        public void WidokCzyszczeniaDysku()
+        {
+            var wybor = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Wybierz co chcesz zrobić:")
+                .PageSize(3)
+                .AddChoices(new[]
+                {
+                    "Oprróżnij kosz",
+                    "Wyczyść pliki tymczasowe",
+                    "Wróć"
+                })
+            );
+        }
+
+        public string WidokPobireaniaSpecyfikacji()
+        {
+            var wybor = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Gdzie chcesz zapisać plik tekstowy ze specyfikacją")
+                .PageSize(6)
+                .AddChoices(new[]
+                {
+                    "Pulpit",
+                    "Pobrane",
+                    "Dokumenty",
+                    "Dysk systemowy",
+                    "Inne",
+                    "Wróć"
+                })
+            );
+            return wybor;
+        }
+        public string WidokNazwaPliku()
+        {
+            AnsiConsole.Clear();
+            var nazwa = AnsiConsole.Prompt(
+                new TextPrompt<string>(@"Wprowadź tekst (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());
+            return nazwa;
+        }
+
+        public void WidokPlikIstnieje(string sciezka)
+        {
+            AnsiConsole.Markup($"Istaniej plik o nazwie: {sciezka}\nKliknij jakiś przycisk aby przejść dalej");
+            Console.ReadKey();
         }
     }
 }

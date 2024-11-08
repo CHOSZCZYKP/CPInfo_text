@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Models\CzyszczenieDysku.cs" />
     <Compile Include="Models\DoTestu.cs" />
     <Compile Include="Models\HelperKonwerter.cs" />
     <Compile Include="Models\Model.cs" />

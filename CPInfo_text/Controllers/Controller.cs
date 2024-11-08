@@ -1,9 +1,12 @@
 ﻿using CPInfo_text.Models;
 using CPInfo_text.Views;
+using LibreHardwareMonitor.Hardware;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -54,10 +57,12 @@ namespace CPInfo_text.Controllers
                     ControlerWyborPodzespoluDoMonitorowania();
                     //ControlerInformacjeOPodzespolach();
                     break;
+                case "Pobierz specyfikacje komputera":
+                    ControlerPobierzSpecyfikacjeKomputera();
+                    break;
                 case "Czyszczenie dysku":
 
                     break;
-
                 case "Informacje":
                     ControlerInformacjeOProgramie();
                     break;
@@ -227,7 +232,7 @@ namespace CPInfo_text.Controllers
             }
             _model.Dispose();
         }*/
-        public void ControlerInformacjeOPodzespolach(string wyborPodzespolu)
+        /*public void ControlerInformacjeOPodzespolach(string wyborPodzespolu)
         {
             _model.DaneCzujnikow(wyborPodzespolu);
             _view.TworzenieTabeli();
@@ -240,11 +245,11 @@ namespace CPInfo_text.Controllers
                 _model.WylaczenieWszystkichPodzespolow();
                 ControlerGlowneMenu();
             }
-        }
+        }*/
 
         public void ControlerInformacjeOPodzespolachAllData(string wyborPodzespolu)
         {
-            _model.DaneCzujnikow(wyborPodzespolu);
+            _model.DaneCzujnikow(wyborPodzespolu, JednostkaTemperatury);
             _view.TworzenieTabeliAllData(KolumnyWyswietlane);
 
             /*foreach (var sensor in _model.ListaCzujnikowInfo)
@@ -257,12 +262,89 @@ namespace CPInfo_text.Controllers
 
             _view.InicjalizacjaTabeliAllData(_model.ListaCzujnikowInfo, KolumnyWyswietlane, JednostkaTemperatury);
             int czasOdswiezania = KonverterMilisekundy();
-            bool wyjscieDoMenu = _view.WyswietlanieTabeliAllData(_model, czasOdswiezania, KolumnyWyswietlane, JednostkaTemperatury);
+            bool wyjscieDoMenu = _view.WyswietlanieTabeliAllData(_model, czasOdswiezania, KolumnyWyswietlane, JednostkaTemperatury);//, JednostkaTemperatury
             if (wyjscieDoMenu)
             {
                 _model.WylaczenieWszystkichPodzespolow();
                 ControlerGlowneMenu();
             }
+        }
+
+        public void ControlerPobierzSpecyfikacjeKomputera()
+        {
+            string wybor = _view.WidokPobireaniaSpecyfikacji();
+
+            switch(wybor)
+            {
+                case "Pulpit":
+                    ControlerPulpitPobierz();
+                    ControlerGlowneMenu();
+                    break;
+                case "Pobrane":
+                    break;
+                case "Dokumenty":
+                    break;
+                case "Dysk systemowy":
+                    break;
+                case "Inne":
+                    break;
+                case "Wróć":
+                    ControlerGlowneMenu();
+                    break;
+            }
+        }
+
+        public void ControlerPulpitPobierz()
+        {
+            string nazwaPliku = _view.WidokNazwaPliku();
+            if (string.IsNullOrEmpty(nazwaPliku))
+            {
+                return;
+            }
+            string pulpitsicezka = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Desktop");
+            string calaSciezka = Path.Combine(pulpitsicezka, nazwaPliku+".txt");
+            if (!File.Exists(calaSciezka))
+            {
+
+                AnsiConsole.MarkupLine("Trwa zapis danych...");
+                /*SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
+                {
+                    //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                    foreach (var info in specyfikacjaKomputera.Specyfikacja)
+                    {
+                        streamWriter.WriteLine(info);
+                        //task.Increment(1);
+                        //Thread.Sleep(2);
+                    }
+
+                }*/
+                AnsiConsole.Progress()
+                    .Start(x =>
+                    {
+                        //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                        var task = x.AddTask("[green]Zapisuje dane[/]");
+                        using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
+                        {
+                            SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                            foreach (var info in specyfikacjaKomputera.Specyfikacja)
+                            {
+                                streamWriter.WriteLine(info);
+                                task.Increment(1);
+                                Thread.Sleep(2);
+                            }
+
+                        }
+                    });
+                AnsiConsole.MarkupLine("[bold green]Zapisano![/]");
+                Thread.Sleep(1000);
+            }
+            else
+            {
+                _view.WidokPlikIstnieje(nazwaPliku);
+                ControlerPulpitPobierz();
+            }
+
         }
 
         public int KonverterMilisekundy()
