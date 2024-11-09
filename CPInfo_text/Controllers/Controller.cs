@@ -43,22 +43,37 @@ namespace CPInfo_text.Controllers
         public void ControlerGlowneMenu()
         {
             string wyborMenuGlowne = _view.WidokGlowneMenu();
-            switch (wyborMenuGlowne.Trim())
+            switch (wyborMenuGlowne)//.Trim()
             {
-                case @"Ustawienia":
+                case @"     __  ___              ___             
+ |  | /__`  |   /\  |  | | |__  |\ | |  /\  
+ \__/ .__/  |  /~~\ |/\| | |___ | \| | /~~\ 
+                                           ":
                     ControlerUstawienia();
                     break;
-                case @"Informacje o podzespołach":
+                case @"       ___  __   __              __        ___     __      __   __   __  __  ___  __   __   __        __       
+ | |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__     /  \    |__) /  \ |  \  / |__  /__` |__) /  \  /\  /  ` |__| 
+ | | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___    \__/    |    \__/ |__/ /_ |___ .__/ |    \__/ /~~\ \__, |  | 
+                                                                                                                ":
                     ControlerWyborPodzespoluDoMonitorowania();
                     //ControlerInformacjeOPodzespolach();
                     break;
-                case @"Pobieranie specyfikacji komputera":
+                case @"__   __   __     ___  __               ___     __   __   ___  __       ___              __                  __         __       ___  ___  __       
+ |__) /  \ |__) | |__  |__)  /\  |\ | | |__     /__` |__) |__  /  ` \ / |__  | |__/  /\  /  `    | |    |__/ /  \  |\/| |__) |  |  |  |__  |__)  /\  
+ |    \__/ |__) | |___ |  \ /~~\ | \| | |___    .__/ |    |___ \__,  |  |    | |  \ /~~\ \__, \__/ |    |  \ \__/  |  | |    \__/  |  |___ |  \ /~~\ 
+                                                                                                                                                    ":
                     ControlerPobierzSpecyfikacjeKomputera();
                     break;
-                case @"Informacje":
+                case @"       ___  __   __              __        ___ 
+ | |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__  
+ | | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___ 
+                                                ":
                     ControlerInformacjeOProgramie();
                     break;
-                case @"Wyjdź":
+                case @"              __  _/_ 
+ |  | \ /    | |  \  / 
+ |/\|  |  \__/ |__/ /_ 
+                      ":
                     _model.Dispose();
                     return;
             }
@@ -160,11 +175,17 @@ namespace CPInfo_text.Controllers
         {
             string wyborTemperatury = _view.WidokTemperatur();
             string jednostka = string.Empty;
-            if (wyborTemperatury.Equals("Stopnie Celciusza"))
+            if (wyborTemperatury.Equals(@"__  ___  __   __          ___     __   ___       __          __  __      
+ /__`  |  /  \ |__) |\ | | |__     /  ` |__  |    /  ` | |  | /__`  /  /\  
+ .__/  |  \__/ |    | \| | |___    \__, |___ |___ \__, | \__/ .__/ /_ /~~\ 
+                                                                          "))
             {
                 JednostkaTemperatury = "°C";
             }
-            else if (wyborTemperatury.Equals("Stopnie Farenheita"))
+            else if (wyborTemperatury.Equals(@"__  ___  __   __          ___     ___       __   ___            ___   ___      
+ /__`  |  /  \ |__) |\ | | |__     |__   /\  |__) |__  |\ | |__| |__  |  |   /\  
+ .__/  |  \__/ |    | \| | |___    |    /~~\ |  \ |___ | \| |  | |___ |  |  /~~\ 
+                                                                                "))
             {
                 JednostkaTemperatury = "°F";
             }

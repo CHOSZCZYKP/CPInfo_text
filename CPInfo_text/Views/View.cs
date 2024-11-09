@@ -21,11 +21,13 @@ namespace CPInfo_text.Views
 
         public void TytulAplikacji()
         {
-            string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
-/    \  \/  |     ___/|   | /    \ \   __\  /  _ \        \   __\_/ __ \ \  \/  /\   __\
-\     \____ |    |    |   ||   |  \ |  |   (  <_> )        |  |  \  ___/  >    <  |  |  
- \______  / |____|    |___||___|  / |__|    \____/  ______ |__|   \___  >/__/\_ \ |__|  
-        \/                      \/                 /_____/            \/       \/       ";
+            string tytul = @"
+___________________.___        _____           __                   __   
+\_   ___ \______   \   | _____/ ____\____    _/  |_  ____ ___  ____/  |_ 
+/    \  \/|     ___/   |/    \   __\/  _ \   \   __\/ __ \\  \/  /\   __\
+\     \___|    |   |   |   |  \  | (  <_> )   |  | \  ___/ >    <  |  |  
+ \______  /____|   |___|___|  /__|  \____/____|__|  \___  >__/\_ \ |__|  
+        \/                  \/          /_____/         \/      \/       ";
             var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
             tytulAplikacji.Justification = Justify.Center;
             AnsiConsole.Write(tytulAplikacji);
@@ -39,46 +41,47 @@ namespace CPInfo_text.Views
 
         public string WidokGlowneMenu()
         {
-            string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
-/    \  \/  |     ___/|   | /    \ \   __\  /  _ \        \   __\_/ __ \ \  \/  /\   __\
-\     \____ |    |    |   ||   |  \ |  |   (  <_> )        |  |  \  ___/  >    <  |  |  
- \______  / |____|    |___||___|  / |__|    \____/  ______ |__|   \___  >/__/\_ \ |__|  
-        \/                      \/                 /_____/            \/       \/       ";
+            string tytul = @"___________________.___        _____           __                   __   
+\_   ___ \______   \   | _____/ ____\____    _/  |_  ____ ___  ____/  |_ 
+/    \  \/|     ___/   |/    \   __\/  _ \   \   __\/ __ \\  \/  /\   __\
+\     \___|    |   |   |   |  \  | (  <_> )   |  | \  ___/ >    <  |  |  
+ \______  /____|   |___|___|  /__|  \____/____|__|  \___  >__/\_ \ |__|  
+        \/                  \/          /_____/         \/      \/       ";
             var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
             tytulAplikacji.Justification = Justify.Center;
             AnsiConsole.Write(tytulAplikacji);
 
-            int szerokosc = AnsiConsole.Profile.Width;
-            string[] strings = { "Ustawienia", "Informacje o podzespołach", "Pobieranie specyfikacji komputera", "Informacje", "Wyjdź" };
-            var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
+            //int szerokosc = AnsiConsole.Profile.Width;
+            //string[] strings = { "Ustawienia", "Informacje o podzespołach", "Pobieranie specyfikacji komputera", "Informacje", "Wyjdź" };
+            //var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
             //AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .PageSize(6)
-                .AddChoices(centred
+                .AddChoices(//centred
                     //"Ustawienia",
                     
 
-                    /*@"    __  ___              ___             
-|  | /__`  |   /\  |  | | |__  |\ | |  /\  
-\__/ .__/  |  /~~\ |/\| | |___ | \| | /~~\ 
+                    @"     __  ___              ___             
+ |  | /__`  |   /\  |  | | |__  |\ | |  /\  
+ \__/ .__/  |  /~~\ |/\| | |___ | \| | /~~\ 
                                            ",
-                    @"      ___  __   __              __        ___     __      __   __   __  __  ___  __   __   __        __       
-| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__     /  \    |__) /  \ |  \  / |__  /__` |__) /  \  /\  /  ` |__| 
-| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___    \__/    |    \__/ |__/ /_ |___ .__/ |    \__/ /~~\ \__, |  | 
+                    @"       ___  __   __              __        ___     __      __   __   __  __  ___  __   __   __        __       
+ | |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__     /  \    |__) /  \ |  \  / |__  /__` |__) /  \  /\  /  ` |__| 
+ | | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___    \__/    |    \__/ |__/ /_ |___ .__/ |    \__/ /~~\ \__, |  | 
                                                                                                                 ",
                     @"__   __   __     ___  __               ___     __   __   ___  __       ___              __                  __         __       ___  ___  __       
-|__) /  \ |__) | |__  |__)  /\  |\ | | |__     /__` |__) |__  /  ` \ / |__  | |__/  /\  /  `    | |    |__/ /  \  |\/| |__) |  |  |  |__  |__)  /\  
-|    \__/ |__) | |___ |  \ /~~\ | \| | |___    .__/ |    |___ \__,  |  |    | |  \ /~~\ \__, \__/ |    |  \ \__/  |  | |    \__/  |  |___ |  \ /~~\ 
+ |__) /  \ |__) | |__  |__)  /\  |\ | | |__     /__` |__) |__  /  ` \ / |__  | |__/  /\  /  `    | |    |__/ /  \  |\/| |__) |  |  |  |__  |__)  /\  
+ |    \__/ |__) | |___ |  \ /~~\ | \| | |___    .__/ |    |___ \__,  |  |    | |  \ /~~\ \__, \__/ |    |  \ \__/  |  | |    \__/  |  |___ |  \ /~~\ 
                                                                                                                                                     ",
-                    @"      ___  __   __              __        ___ 
-| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__  
-| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___ 
+                    @"       ___  __   __              __        ___ 
+ | |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__  
+ | | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___ 
                                                 ",
-                    @"             __  _/_ 
-|  | \ /    | |  \  / 
-|/\|  |  \__/ |__/ /_ 
-                      "*/
+                    @"              __  _/_ 
+ |  | \ /    | |  \  / 
+ |/\|  |  \__/ |__/ /_ 
+                      "
                 )
             );
 
@@ -190,12 +193,21 @@ namespace CPInfo_text.Views
                 new SelectionPrompt<string>()
                 //.Title("Temperatura")
                 .PageSize(3)
-                .AddChoices(centred.Select(s => $"[bold]{s}[/]"))/*new[]
+                .AddChoices(new[]
                 {
-                    "Stopnie Celciusza",
-                    "Stopnie Farenheita",
-                    "Wróć"
-                })*/
+                    @"__  ___  __   __          ___     __   ___       __          __  __      
+ /__`  |  /  \ |__) |\ | | |__     /  ` |__  |    /  ` | |  | /__`  /  /\  
+ .__/  |  \__/ |    | \| | |___    \__, |___ |___ \__, | \__/ .__/ /_ /~~\ 
+                                                                          ",
+                    @"__  ___  __   __          ___     ___       __   ___            ___   ___      
+ /__`  |  /  \ |__) |\ | | |__     |__   /\  |__) |__  |\ | |__| |__  |  |   /\  
+ .__/  |  \__/ |    | \| | |___    |    /~~\ |  \ |___ | \| |  | |___ |  |  /~~\ 
+                                                                                ",
+                    @"     __   _/_  _/_  
+ |  | |__) /  \ /   
+ |/\| |  \ \__/ \__, 
+                    "
+                })
             );
 
             AnsiConsole.Clear();
