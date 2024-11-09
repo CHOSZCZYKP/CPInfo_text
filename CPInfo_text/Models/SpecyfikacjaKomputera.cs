@@ -1,11 +1,15 @@
 ﻿using LibreHardwareMonitor.Hardware;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace CPInfo_text.Models
 {
@@ -15,20 +19,29 @@ namespace CPInfo_text.Models
         public SpecyfikacjaKomputera()
         {
             this.Specyfikacja = new List<string>();
-            /*DodanieSpecyfikacjiProcesora();
-            DodanieSpecyfikacjiPlytyGlownej();
-            DodanieSpecyfikacjiRAM();
-            DodanieSpecyfikacjiGPU();
-            DodanieSpecyfikacjiDysku();
-            DodanieSpecyfikacjiKartSieciowych();
-            DodanieSpecyfikacjiBios();
-            DodanieSpecyfikacjiSystemu();*/
-            
+            var tasks = new List<Task<List<string>>>
+            {
+                Task.Run(() => DodanieSpecyfikacjiProcesora()),
+                Task.Run(() => DodanieSpecyfikacjiPlytyGlownej()),
+                Task.Run(() => DodanieSpecyfikacjiRAM()),
+                Task.Run(() => DodanieSpecyfikacjiGPU()),
+                Task.Run(() => DodanieSpecyfikacjiDysku()),
+                Task.Run(() => DodanieSpecyfikacjiKartSieciowych()),
+                Task.Run(() => DodanieSpecyfikacjiBios()),
+                Task.Run(() => DodanieSpecyfikacjiSystemu()),
+            };
+            Task.WhenAll(tasks).Wait();
+            foreach (var task in tasks)
+            {
+                Specyfikacja.AddRange(task.Result);
+            }
+
         }
-        public void DodanieSpecyfikacjiProcesora()
+        private List<string> DodanieSpecyfikacjiProcesora()
         {
-            //Console.WriteLine("Informacje o procesorze");
-            Specyfikacja.Add("Informacje o procesorze");
+            List<string> lista = new List<string>();
+
+            lista.Add("Informacje o procesorze");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_Processor"))
             {
                 foreach (var obj in searcher.Get())
@@ -37,18 +50,19 @@ namespace CPInfo_text.Models
                     {
                         if (property.Value != null)
                         {
-                            Specyfikacja.Add($"         {property.Name}: {property.Value}");
-                            //Console.WriteLine($"{property.Name}: {property.Value}");
+                            lista.Add($"        {property.Name}: {property.Value}");
                         }
 
                     }
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiPlytyGlownej()
+        private List<string> DodanieSpecyfikacjiPlytyGlownej()
         {
-            //Console.WriteLine("Informacje o płycie głównej");
-            Specyfikacja.Add("Informacje o płycie głównej");
+            List<string> lista = new List<string>();
+
+            lista.Add("Informacje o płycie głównej");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_BaseBoard"))
             {
                 foreach (var obj in searcher.Get())
@@ -57,23 +71,24 @@ namespace CPInfo_text.Models
                     {
                         if (property.Value != null)
                         {
-                            Specyfikacja.Add($"       {property.Name}: {property.Value}");
-                            //Console.WriteLine($"{property.Name}: {property.Value}");
+                            lista.Add($"        {property.Name}: {property.Value}");
                         }
                     }
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiRAM()
+        private List<string> DodanieSpecyfikacjiRAM()
         {
-            //Console.WriteLine("Inforamcje o RAM");
-            Specyfikacja.Add("Inforamcje o RAM");
+            List<string> lista = new List<string>();
+
+            lista.Add("Inforamcje o RAM");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
             {
                 int licznik = 1;
                 foreach (var obj in searcher.Get())
                 {
-                    Specyfikacja.Add($"Pamięć {licznik}");
+                    lista.Add($"Pamięć {licznik}");
 
                     foreach (var property in obj.Properties)
                     {
@@ -81,11 +96,11 @@ namespace CPInfo_text.Models
                         {
                             if (property.Name.Equals("Capacity"))
                             {
-                                Specyfikacja.Add($"      {property.Name}: {Convert.ToInt64(obj["Capacity"]) / (1024 * 1024 * 1024)} GB");
+                                lista.Add($"        {property.Name}: {Convert.ToInt64(obj["Capacity"]) / (1024 * 1024 * 1024)} GB");
                             }
                             else
                             {
-                                Specyfikacja.Add($"      {property.Name}: {property.Value}");
+                                lista.Add($"        {property.Name}: {property.Value}");
                             }
 
                         }
@@ -93,10 +108,12 @@ namespace CPInfo_text.Models
                     licznik++;
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiGPU()
+        private List<string> DodanieSpecyfikacjiGPU()
         {
-            Specyfikacja.Add("Informacje o karcie graficznej");
+            List<string> lista = new List<string>();
+            lista.Add("Informacje o karcie graficznej");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_VideoController"))
             {
                 foreach (var obj in searcher.Get())
@@ -116,73 +133,78 @@ namespace CPInfo_text.Models
                                     {
                                         if (sensor.Name.Equals("GPU Memory Total"))
                                         {
-                                            Specyfikacja.Add($"     {property.Name}: {sensor.Value.GetValueOrDefault()} MB");
+                                            lista.Add($"        {property.Name}: {sensor.Value.GetValueOrDefault()} MB");
                                         }
                                     }
                                 }
                                 computer.Close();
-                                //Console.WriteLine($"{property.Name}: {(UInt64)Convert.ToInt64(obj["AdapterRAM"]) / (1024 * 1024)} MB");
                             }
                             else
                             {
-                                Specyfikacja.Add($"      {property.Name}: {property.Value}");
+                                lista.Add($"        {property.Name}: {property.Value}");
                             }
 
                         }
                     }
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiDysku()
+        private List<string> DodanieSpecyfikacjiDysku()
         {
-            Specyfikacja.Add("Informacje o dyskach");
+            List<string> lista = new List<string>();
+            lista.Add("Informacje o dyskach");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_DiskDrive"))
             {
                 int licznik = 1;
                 foreach (var obj in searcher.Get())
                 {
-                    Specyfikacja.Add($"Dysk {licznik}");
+                    lista.Add($"Dysk {licznik}");
                     foreach (var property in obj.Properties)
                     {
                         if (property.Value != null)
                         {
                             if (property.Name.Equals("Size"))
                             {
-                                Specyfikacja.Add($"     {property.Name}: {(UInt64)Convert.ToInt64(obj["Size"]) / (1024 * 1024 * 1024)} GB");
+                                lista.Add($"        {property.Name}: {(UInt64)Convert.ToInt64(obj["Size"]) / (1024 * 1024 * 1024)} GB");
                             }
                             else
                             {
-                                Specyfikacja.Add($"      {property.Name}: {property.Value}");
+                                lista.Add($"        {property.Name}: {property.Value}");
                             }
 
                         }
                     }
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiKartSieciowych()
+        private List<string> DodanieSpecyfikacjiKartSieciowych()
         {
-            Specyfikacja.Add("Informacje o kartach sieciowych");
+            List<string> lista = new List<string>();
+            lista.Add("Informacje o kartach sieciowych");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_NetworkAdapter  where NetEnabled=true"))
             {
                 int licznik = 1;
                 foreach (var obj in searcher.Get())
                 {
-                    Specyfikacja.Add($"Karta sieciowa {licznik}");
+                    lista.Add($"Karta sieciowa {licznik}");
                     foreach (var property in obj.Properties)
                     {
                         if (property.Value != null)
                         {
-                            Specyfikacja.Add($"     {property.Name}: {property.Value}");
+                            lista.Add($"        {property.Name}: {property.Value}");
                         }
                     }
                     licznik++;
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiSystemu()
+        private List<string> DodanieSpecyfikacjiSystemu()
         {
-            Specyfikacja.Add("Informacje o systemie");
+            List<string> lista = new List<string>();
+            lista.Add("Informacje o systemie");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_OperatingSystem"))
             {
                 foreach (var obj in searcher.Get())
@@ -191,15 +213,17 @@ namespace CPInfo_text.Models
                     {
                         if (property.Value != null)
                         {
-                            Specyfikacja.Add($"     {property.Name}: {property.Value}");
+                            lista.Add($"        {property.Name}: {property.Value}");
                         }
                     }
                 }
             }
+            return lista;
         }
-        public void DodanieSpecyfikacjiBios()
+        private List<string> DodanieSpecyfikacjiBios()
         {
-            Specyfikacja.Add("Informacje o BIOS-ie");
+            List<string> lista = new List<string>();
+            lista.Add("Informacje o BIOS-ie");
             using (var searcher = new ManagementObjectSearcher("select * from Win32_BIOS"))
             {
                 foreach (var obj in searcher.Get())
@@ -208,10 +232,26 @@ namespace CPInfo_text.Models
                     {
                         if (property.Value != null)
                         {
-                            Specyfikacja.Add($"     {property.Name}: {property.Value}");
+                            lista.Add($"        {property.Name}: {property.Value}");
                         }
                     }
                 }
+            }
+            return lista;
+        }
+        public void ZapisDoPliku(string calaSciezka, ProgressTask task)
+        {
+            using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
+            {
+                SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+
+                foreach (var info in specyfikacjaKomputera.Specyfikacja)
+                {
+                    streamWriter.WriteLine(info);
+                    task.Increment(1);
+                    Thread.Sleep(1);
+                }
+
             }
         }
     }

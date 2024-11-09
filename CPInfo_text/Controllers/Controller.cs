@@ -34,39 +34,31 @@ namespace CPInfo_text.Controllers
 
         }
 
-        public void Start()
+        /*public void Start()
         {
             _view.TytulAplikacji();
             ControlerGlowneMenu();
 
-        }
+        }*/
         public void ControlerGlowneMenu()
         {
             string wyborMenuGlowne = _view.WidokGlowneMenu();
-            switch (wyborMenuGlowne)
+            switch (wyborMenuGlowne.Trim())
             {
-                case @" ____ ___         __                .__              .__        
-|    |   \_______/  |______ __  _  _|__| ____   ____ |__|____   
-|    |   /  ___/\   __\__  \\ \/ \/ /  |/ __ \ /    \|  \__  \  
-|    |  /\___ \  |  |  / __ \\     /|  \  ___/|   |  \  |/ __ \_
-|______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
-             \/            \/               \/     \/        \/ ":
+                case @"Ustawienia":
                     ControlerUstawienia();
                     break;
-                case "Informacje o podzespołach":
+                case @"Informacje o podzespołach":
                     ControlerWyborPodzespoluDoMonitorowania();
                     //ControlerInformacjeOPodzespolach();
                     break;
-                case "Pobierz specyfikacje komputera":
+                case @"Pobieranie specyfikacji komputera":
                     ControlerPobierzSpecyfikacjeKomputera();
                     break;
-                case "Czyszczenie dysku":
-
-                    break;
-                case "Informacje":
+                case @"Informacje":
                     ControlerInformacjeOProgramie();
                     break;
-                case "Wyjdź":
+                case @"Wyjdź":
                     _model.Dispose();
                     return;
             }
@@ -281,12 +273,20 @@ namespace CPInfo_text.Controllers
                     ControlerGlowneMenu();
                     break;
                 case "Pobrane":
+                    ControlerPobranePobierz();
+                    ControlerGlowneMenu();
                     break;
                 case "Dokumenty":
+                    ControlerDokumentyPobierz();
+                    ControlerGlowneMenu();
                     break;
                 case "Dysk systemowy":
+                    ControlerDyskSystemowyPobierz();
+                    ControlerGlowneMenu();
                     break;
                 case "Inne":
+                    ControlerInneMiejscePobierz();
+                    ControlerGlowneMenu();
                     break;
                 case "Wróć":
                     ControlerGlowneMenu();
@@ -301,43 +301,12 @@ namespace CPInfo_text.Controllers
             {
                 return;
             }
-            string pulpitsicezka = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Desktop");
-            string calaSciezka = Path.Combine(pulpitsicezka, nazwaPliku+".txt");
+            string pulpitSciezka = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Desktop");
+            string calaSciezka = Path.Combine(pulpitSciezka, nazwaPliku + ".txt");
             if (!File.Exists(calaSciezka))
             {
-
-                AnsiConsole.MarkupLine("Trwa zapis danych...");
-                /*SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
-                using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
-                {
-                    //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
-                    foreach (var info in specyfikacjaKomputera.Specyfikacja)
-                    {
-                        streamWriter.WriteLine(info);
-                        //task.Increment(1);
-                        //Thread.Sleep(2);
-                    }
-
-                }*/
-                AnsiConsole.Progress()
-                    .Start(x =>
-                    {
-                        //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
-                        var task = x.AddTask("[green]Zapisuje dane[/]");
-                        using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
-                        {
-                            SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
-                            foreach (var info in specyfikacjaKomputera.Specyfikacja)
-                            {
-                                streamWriter.WriteLine(info);
-                                task.Increment(1);
-                                Thread.Sleep(2);
-                            }
-
-                        }
-                    });
-                AnsiConsole.MarkupLine("[bold green]Zapisano![/]");
-                Thread.Sleep(1000);
+                SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                _view.WidokProgressBar(calaSciezka, specyfikacjaKomputera);
             }
             else
             {
@@ -345,6 +314,99 @@ namespace CPInfo_text.Controllers
                 ControlerPulpitPobierz();
             }
 
+        }
+
+        public void ControlerPobranePobierz()
+        {
+            string nazwaPliku = _view.WidokNazwaPliku();
+            if (string.IsNullOrEmpty(nazwaPliku))
+            {
+                return;
+            }
+            string pobraneSciezka = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string calaSciezka = Path.Combine(pobraneSciezka, nazwaPliku + ".txt");
+            if (!File.Exists(calaSciezka))
+            {
+                SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                _view.WidokProgressBar(calaSciezka, specyfikacjaKomputera);
+            }
+            else
+            {
+                _view.WidokPlikIstnieje(nazwaPliku);
+                ControlerPobranePobierz();
+            }
+        }
+
+        public void ControlerDokumentyPobierz()
+        {
+            string nazwaPliku = _view.WidokNazwaPliku();
+            if (string.IsNullOrEmpty(nazwaPliku))
+            {
+                return;
+            }
+            string dokumentySciezka = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents");
+            string calaSciezka = Path.Combine(dokumentySciezka, nazwaPliku + ".txt");
+            if (!File.Exists(calaSciezka))
+            {
+                SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                _view.WidokProgressBar(calaSciezka, specyfikacjaKomputera);
+            }
+            else
+            {
+                _view.WidokPlikIstnieje(nazwaPliku);
+                ControlerDokumentyPobierz();
+            }
+        }
+
+        public void ControlerDyskSystemowyPobierz()
+        {
+            string nazwaPliku = _view.WidokNazwaPliku();
+            if (string.IsNullOrEmpty(nazwaPliku))
+            {
+                return;
+            }
+            string dyskSystemowySciezka = Path.GetPathRoot(Environment.SystemDirectory);
+            string calaSciezka = Path.Combine(dyskSystemowySciezka, nazwaPliku + ".txt");
+            if (!File.Exists(calaSciezka))
+            {
+                SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                _view.WidokProgressBar(calaSciezka, specyfikacjaKomputera);
+            }
+            else
+            {
+                _view.WidokPlikIstnieje(nazwaPliku);
+                ControlerDyskSystemowyPobierz();
+            }
+        }
+
+        public void ControlerInneMiejscePobierz()
+        {
+            string calaSciezka = _view.WidokCalaSciezkaDoPliku();
+            if (string.IsNullOrEmpty(calaSciezka))
+            {
+                return;
+            }
+
+            string calaSciezkaZRozszerzeniem = $"{calaSciezka}.txt";
+            string sciezkaKatalogow = Path.GetDirectoryName(calaSciezka);
+            if (Directory.Exists(sciezkaKatalogow))
+            {
+                if (!File.Exists(calaSciezka))
+                {
+                    SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                    _view.WidokProgressBar(calaSciezkaZRozszerzeniem, specyfikacjaKomputera);
+                }
+                else
+                {
+                    _view.WidokPlikIstnieje(Path.GetFileName(calaSciezkaZRozszerzeniem));
+                    ControlerInneMiejscePobierz();
+                }
+            }
+            else
+            {
+                _view.WidokKatalogNieIstnieje(sciezkaKatalogow);
+                ControlerInneMiejscePobierz();
+            }
         }
 
         public int KonverterMilisekundy()

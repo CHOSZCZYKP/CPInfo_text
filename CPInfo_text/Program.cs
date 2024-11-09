@@ -20,7 +20,7 @@ namespace CPInfo_text
             View view = new View();
             Model model = new Model();
             Controller controller = new Controller(model, view);
-            controller.Start();
+            controller.ControlerGlowneMenu();
             
         }
     }

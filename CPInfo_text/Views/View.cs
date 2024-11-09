@@ -4,6 +4,7 @@ using LibreHardwareMonitor.Hardware;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection.Emit;
@@ -30,29 +31,82 @@ namespace CPInfo_text.Views
             AnsiConsole.Write(tytulAplikacji);
         }
 
+        private static string WysrodkujTekst(string tekst, int calaSzerowkosc)
+        {
+            int padding = (calaSzerowkosc - tekst.Length) / 2;
+            return tekst.PadLeft(padding + tekst.Length).PadRight(calaSzerowkosc);
+        }
+
         public string WidokGlowneMenu()
         {
-            AnsiConsole.Clear();
+            string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
+/    \  \/  |     ___/|   | /    \ \   __\  /  _ \        \   __\_/ __ \ \  \/  /\   __\
+\     \____ |    |    |   ||   |  \ |  |   (  <_> )        |  |  \  ___/  >    <  |  |  
+ \______  / |____|    |___||___|  / |__|    \____/  ______ |__|   \___  >/__/\_ \ |__|  
+        \/                      \/                 /_____/            \/       \/       ";
+            var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulAplikacji.Justification = Justify.Center;
+            AnsiConsole.Write(tytulAplikacji);
+
+            int szerokosc = AnsiConsole.Profile.Width;
+            string[] strings = { "Ustawienia", "Informacje o podzespołach", "Pobieranie specyfikacji komputera", "Informacje", "Wyjdź" };
+            var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
+            //AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title("Wybierz opcję:")
                 .PageSize(6)
-                .AddChoices(new[] {
+                .AddChoices(centred
                     //"Ustawienia",
-                    @" ____ ___         __                .__              .__        
-|    |   \_______/  |______ __  _  _|__| ____   ____ |__|____   
-|    |   /  ___/\   __\__  \\ \/ \/ /  |/ __ \ /    \|  \__  \  
-|    |  /\___ \  |  |  / __ \\     /|  \  ___/|   |  \  |/ __ \_
-|______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
-             \/            \/               \/     \/        \/ ",
-                    "Informacje o podzespołach",//dodać jescze opcję jakipodzespół ma jaki sterownik
-                    "Pobierz specyfikacje komputera",
-                    "Czyszczenie dysku",
-                    "Informacje",
-                    "Wyjdź" 
-                })
+                    
+
+                    /*@"    __  ___              ___             
+|  | /__`  |   /\  |  | | |__  |\ | |  /\  
+\__/ .__/  |  /~~\ |/\| | |___ | \| | /~~\ 
+                                           ",
+                    @"      ___  __   __              __        ___     __      __   __   __  __  ___  __   __   __        __       
+| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__     /  \    |__) /  \ |  \  / |__  /__` |__) /  \  /\  /  ` |__| 
+| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___    \__/    |    \__/ |__/ /_ |___ .__/ |    \__/ /~~\ \__, |  | 
+                                                                                                                ",
+                    @"__   __   __     ___  __               ___     __   __   ___  __       ___              __                  __         __       ___  ___  __       
+|__) /  \ |__) | |__  |__)  /\  |\ | | |__     /__` |__) |__  /  ` \ / |__  | |__/  /\  /  `    | |    |__/ /  \  |\/| |__) |  |  |  |__  |__)  /\  
+|    \__/ |__) | |___ |  \ /~~\ | \| | |___    .__/ |    |___ \__,  |  |    | |  \ /~~\ \__, \__/ |    |  \ \__/  |  | |    \__/  |  |___ |  \ /~~\ 
+                                                                                                                                                    ",
+                    @"      ___  __   __              __        ___ 
+| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__  
+| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___ 
+                                                ",
+                    @"             __  _/_ 
+|  | \ /    | |  \  / 
+|/\|  |  \__/ |__/ /_ 
+                      "*/
+                )
             );
 
+            /*                    @"
+      __  ___              ___             
+|  | /__`  |   /\  |  | | |__  |\ | |  /\  
+\__/ .__/  |  /~~\ |/\| | |___ | \| | /~~\ 
+                                           ",
+                    @"
+        ___  __   __              __        ___     __      __   __   __  __  ___  __   __   __        __       
+| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__     /  \    |__) /  \ |  \  / |__  /__` |__) /  \  /\  /  ` |__| 
+| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___    \__/    |    \__/ |__/ /_ |___ .__/ |    \__/ /~~\ \__, |  | 
+                                                                                                                ",                 
+@"
+ __   __   __     ___  __               ___     __   __   ___  __       ___              __                  __         __       ___  ___  __       
+|__) /  \ |__) | |__  |__)  /\  |\ | | |__     /__` |__) |__  /  ` \ / |__  | |__/  /\  /  `    | |    |__/ /  \  |\/| |__) |  |  |  |__  |__)  /\  
+|    \__/ |__) | |___ |  \ /~~\ | \| | |___    .__/ |    |___ \__,  |  |    | |  \ /~~\ \__, \__/ |    |  \ \__/  |  | |    \__/  |  |___ |  \ /~~\ 
+                                                                                                                                                    ",
+                    @"
+        ___  __   __              __        ___ 
+| |\ | |__  /  \ |__)  |\/|  /\  /  `    | |__  
+| | \| |    \__/ |  \  |  | /~~\ \__, \__/ |___ 
+                                                ",
+                    @" 
+               __  _/_ 
+|  | \ /    | |  \  / 
+|/\|  |  \__/ |__/ /_ 
+                      "*/
             AnsiConsole.Clear();
             return wybor;
         }
@@ -486,14 +540,55 @@ namespace CPInfo_text.Views
         {
             AnsiConsole.Clear();
             var nazwa = AnsiConsole.Prompt(
-                new TextPrompt<string>(@"Wprowadź tekst (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());
+                new TextPrompt<string>(@"Wprowadź nazwę pliku (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());
             return nazwa;
+        }
+
+        public string WidokCalaSciezkaDoPliku()
+        {
+            AnsiConsole.Clear();
+            var calaSciekzka = AnsiConsole.Prompt(
+                new TextPrompt<string>(@"Wprowadź całą ścieżkę do pliku (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());
+            return calaSciekzka;
         }
 
         public void WidokPlikIstnieje(string sciezka)
         {
             AnsiConsole.Markup($"Istaniej plik o nazwie: {sciezka}\nKliknij jakiś przycisk aby przejść dalej");
             Console.ReadKey();
+        }
+
+        public void WidokKatalogNieIstnieje(string sciezka)
+        {
+            AnsiConsole.Markup($"Nie istnieje taka ścieżka do katalogów {sciezka}\nKliknij jakiś przycisk aby przejść dalej");
+            Console.ReadKey();
+        }
+
+        public void WidokProgressBar(string calaSciezka, SpecyfikacjaKomputera specyfikacjaKomputera)
+        {
+            AnsiConsole.MarkupLine("Trwa zapis danych...");
+            AnsiConsole.Progress()
+                .Start(x =>
+                {
+                    //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+                    var task = x.AddTask("[green]Zapisuje dane[/]");
+                    specyfikacjaKomputera.ZapisDoPliku(calaSciezka, task);
+                    /*using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
+                    {
+                        SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
+
+                        foreach (var info in specyfikacjaKomputera.Specyfikacja)
+                        {
+                            streamWriter.WriteLine(info);
+                            task.Increment(1);
+                            Thread.Sleep(1);
+                        }
+
+                    }*/
+                });
+            AnsiConsole.MarkupLine("[bold green]Zapisano![/]");
+            Thread.Sleep(1000);
+
         }
     }
 }
