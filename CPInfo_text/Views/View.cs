@@ -19,7 +19,18 @@ namespace CPInfo_text.Views
         private Table _table;
         private Table _tableAllData;
 
-        public void TytulAplikacji()
+        private void WysrodkowanieWPionie()
+        {
+            int wysokosc = AnsiConsole.Profile.Height;
+            int puteLinie = (wysokosc / 3);
+
+            for (int i = 0; i < puteLinie; i++)
+            {
+                AnsiConsole.WriteLine();
+            }
+
+        }
+        /*public void TytulAplikacji()
         {
             string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
 /    \  \/  |     ___/|   | /    \ \   __\  /  _ \        \   __\_/ __ \ \  \/  /\   __\
@@ -29,33 +40,38 @@ namespace CPInfo_text.Views
             var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
             tytulAplikacji.Justification = Justify.Center;
             AnsiConsole.Write(tytulAplikacji);
-        }
+        }*/
 
-        private static string WysrodkujTekst(string tekst, int calaSzerowkosc)
+        private static string WysrodkowanieWPoziomie(string tekst)
         {
-            int padding = (calaSzerowkosc - tekst.Length) / 2;
-            return tekst.PadLeft(padding + tekst.Length).PadRight(calaSzerowkosc);
+            int szerokosc = AnsiConsole.Profile.Width;
+            int padding = (szerokosc - tekst.Length) / 2;
+            return tekst.PadLeft(padding + tekst.Length).PadRight(szerokosc);
         }
 
         public string WidokGlowneMenu()
         {
-            string tytul = @"\_   ___ \ \______   \|   |  ____  _/ ____\  ____         _/  |_   ____  ___  ____/  |_ 
-/    \  \/  |     ___/|   | /    \ \   __\  /  _ \        \   __\_/ __ \ \  \/  /\   __\
-\     \____ |    |    |   ||   |  \ |  |   (  <_> )        |  |  \  ___/  >    <  |  |  
- \______  / |____|    |___||___|  / |__|    \____/  ______ |__|   \___  >/__/\_ \ |__|  
-        \/                      \/                 /_____/            \/       \/       ";
+            AnsiConsole.Clear();
+            string tytul = @"___________________.___        _____           __                   __   
+\_   ___ \______   \   | _____/ ____\____    _/  |_  ____ ___  ____/  |_ 
+/    \  \/|     ___/   |/    \   __\/  _ \   \   __\/ __ \\  \/  /\   __\
+\     \___|    |   |   |   |  \  | (  <_> )   |  | \  ___/ >    <  |  |  
+ \______  /____|   |___|___|  /__|  \____/____|__|  \___  >__/\_ \ |__|  
+        \/                  \/          /_____/         \/      \/       ";
             var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
             tytulAplikacji.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
             AnsiConsole.Write(tytulAplikacji);
 
-            int szerokosc = AnsiConsole.Profile.Width;
-            string[] strings = { "Ustawienia", "Informacje o podzespołach", "Pobieranie specyfikacji komputera", "Informacje", "Wyjdź" };
-            var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
+            
+            string[] menuWyboru = { "Ustawienia", "Informacje o podzespołach", "Pobieranie specyfikacji komputera", "Informacje", "Wyjdź" };
+            var wysrodkowane = menuWyboru.Select(s => WysrodkowanieWPoziomie(s)).ToList();
             //AnsiConsole.Clear();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .PageSize(6)
-                .AddChoices(centred
+                .AddChoices(wysrodkowane
                     //"Ustawienia",
                     
 
@@ -108,66 +124,104 @@ namespace CPInfo_text.Views
 |/\|  |  \__/ |__/ /_ 
                       "*/
             AnsiConsole.Clear();
-            return wybor;
+            return wybor.Trim();
         }
         public string WidokUstawienia()
         {
+            string tytul = @" ____ ___         __                .__              .__        
+|    |   \_______/  |______ __  _  _|__| ____   ____ |__|____   
+|    |   /  ___/\   __\__  \\ \/ \/ /  |/ __ \ /    \|  \__  \  
+|    |  /\___ \  |  |  / __ \\     /|  \  ___/|   |  \  |/ __ \_
+|______//____  > |__| (____  /\/\_/ |__|\___  >___|  /__(____  /
+             \/            \/               \/     \/        \/ ";
+            var tytulUstawienia = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulUstawienia.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+            AnsiConsole.Write(tytulUstawienia);
+
+
+            string[] menuWyboru = { "Wyświetlanie kolumny", 
+                "Jednostka temperatury", 
+                "Aktualizacja interwałów", 
+                "Wróć" };
+            var wysrodkowane = menuWyboru.Select(s => WysrodkowanieWPoziomie(s)).ToList();
             string wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title("Ustawienia")
+                //.Title("Ustawienia")
                 .PageSize(5)
-                .AddChoices(new[] 
-                {
-                    "Wyświetlanie kolumny",
-                    "Jednostka temperatury",
-                    "Aktualizacja interwałów",
-                    "Wróć"
-                })
+                .AddChoices(wysrodkowane)
             );
 
             AnsiConsole.Clear();
-            return wybor;
+            return wybor.Trim();
         }
         
         public string WidokWyborPodzespoluDoMonitorowania()
         {
-            var wyborPodzespoluDoMoniotorwania = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Wybierz które podzespoły chcesz monitorować:")
-                .PageSize(9)
-                .AddChoices(new[]
-                {
-                    "CPU",
+            string tytul = @"  _________ __                                    .___                                   .__         
+ /   _____//  |______    ____   ______   ____   __| _/_______ ____   ____________   ____ |  |  __ __ 
+ \_____  \\   __\__  \  /    \  \____ \ /  _ \ / __ |\___   // __ \ /  ___/\____ \ /  _ \|  |/ |  |  \
+ /        \|  |  / __ \|   |  \ |  |_> >  <_> ) /_/ | /    /\  ___/ \___ \ |  |_> >  <_> )  |_ |  |  /
+/_______  /|__| (____  /___|  / |   __/ \____/\____ |/_____ \\___  >____  >|   __/ \____/|____/ ____/ 
+        \/           \/     \/  |__|               \/      \/    \/     \/ |__|                      ";
+            var tytulMonitoringu = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulMonitoringu.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+            AnsiConsole.Write(tytulMonitoringu);
+
+
+            string[] menuWyboru = { "CPU",
                     "Płyta główna",
                     "Pamięć RAM",
                     "Karta graficzna",
                     "Dyski twarde",
                     "Karty sieciowe",
                     "Bateria",
-                    "Wróć"
-                })
+                    "Wróć" };
+            var wysrodkowane = menuWyboru.Select(s => WysrodkowanieWPoziomie(s)).ToList();
+            var wyborPodzespoluDoMoniotorwania = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                //.Title("Wybierz które podzespoły chcesz monitorować:")
+                .PageSize(9)
+                .AddChoices(wysrodkowane)
             );
 
             AnsiConsole.Clear();
-            return wyborPodzespoluDoMoniotorwania;
+            return wyborPodzespoluDoMoniotorwania.Trim();
         }
 
         public List<string> WidokKolumny()
         {
-            var wyborKolumn = AnsiConsole.Prompt(
-                new MultiSelectionPrompt<string>()
-                .Title("Wybierz jakie kolumny wyświetlać:")
-                .PageSize(4)
-                .AddChoices(new[]
-                {
-                    "Wartość",
+            string tytul = @" ____  __.     .__                                                              .__        __  .__                        
+|    |/ _|____ |  |  __ __  _____   ____ ___.__. __  _  _____.__. ___/____  _  _|__| _____/  |_|  | _____    ____   ____  
+|      < /  _ \|  | |  |  \/     \ /    <   |  | \ \/ \/ <   |  |/  ___/\ \/ \/ /  |/ __ \   __\  | \__  \  /    \_/ __ \ 
+|    |  (  <_> )  |_|  |  /  Y Y  \   |  \___  |  \     / \___  |\___ \  \     /|  \  ___/|  | |  |__/ __ \|   |  \  ___/ 
+|____|__ \____/|____/____/|__|_|  /___|  / ____|   \/\_/  / ____/____  >  \/\_/ |__|\___  >__| |____(____  /___|  /\___  >
+        \/                      \/     \/\/               \/         \/                 \/               \/     \/     \/ ";
+            var tytulWidokuKolumn = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulWidokuKolumn.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+            AnsiConsole.Write(tytulWidokuKolumn);
+
+
+            string[] menuWyboru = { "Wartość",
                     "Min",
                     "Max",
-                    "Wróć",
-                })
+                    "Wróć",};
+            var wysrodkowane = menuWyboru.Select(s => WysrodkowanieWPoziomie(s)).ToList();
+            var wyborKolumn = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                //.Title("Wybierz jakie kolumny wyświetlać:")
+                .PageSize(4)
+                .AddChoices(wysrodkowane)
             );
             AnsiConsole.Clear();
-            return wyborKolumn;
+
+            List<string> trimLista = wyborKolumn.Select(s => s.Trim()).ToList();
+            return trimLista;
         }
 
         public string WidokTemperatur()
@@ -178,19 +232,21 @@ namespace CPInfo_text.Views
   |    |\  ___/|  Y Y  \  |_> >  ___/|  | \// __ \|  | |  |  /|  | \// __ \_
   |____| \___  >__|_|  /   __/ \___  >__|  (____  /__| |____/ |__|  (____  /
              \/      \/|__|        \/           \/                       \/ ";
-            var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
-            tytulAplikacji.Justification = Justify.Center;
-            AnsiConsole.Write(tytulAplikacji);
+            var tytulTemperatura = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulTemperatura.Justification = Justify.Center;
 
-            int szerokosc = AnsiConsole.Profile.Width;
-            string[] strings = { "Stopnie Celciusza", "Stopnie Farenheita", "Wróć" };
-            var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
+            WysrodkowanieWPionie();
+
+            AnsiConsole.Write(tytulTemperatura);
+
+            string[] temperaturaWybor = { "Stopnie Celciusza", "Stopnie Farenheita", "Wróć" };
+            var wysrodkowane = temperaturaWybor.Select(s => WysrodkowanieWPoziomie(s)).ToList();
 
             var wybor = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 //.Title("Temperatura")
                 .PageSize(3)
-                .AddChoices(centred.Select(s => $"[bold]{s}[/]"))/*new[]
+                .AddChoices(wysrodkowane)/*new[]
                 {
                     "Stopnie Celciusza",
                     "Stopnie Farenheita",
@@ -199,7 +255,7 @@ namespace CPInfo_text.Views
             );
 
             AnsiConsole.Clear();
-            return wybor;
+            return wybor.Trim();
         }
 
         public string WidokInformacjaOProgramie()
@@ -226,24 +282,36 @@ namespace CPInfo_text.Views
 
         public string WidokAktualizacjaInterwalow()
         {
-            var wybor = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Wybór aktualizacji interwałów")
-                .PageSize(7)
-                .AddChoices(new[]
-                {
-                    "250 ms",
+            string tytul = @"   _____   __      __               .__  .__                           __         _________                  __               __                 
+  /  _  \ |  | ___/  |_ __ _______  |  | |__|____________    ____     |__|____    \_   ___ \__________ __   |__| ____   ____ |  | ____/___  _  __
+ /  /_\  \|  |/ /\   __\  |  \__  \ |  | |  \___   /\__  \ _/ ___\    |  \__  \   /    \  \/\___   /  |  \  |  |/    \ /  _ \|  |/ /  _ \ \/ \/ /
+/    |    \    <  |  | |  |  // __ \|  |_|  |/    /  / __ \\  \___    |  |/ __ \_ \     \____/    /|  |  /  |  |   |  (  <_> )    <  <_> )     / 
+\____|__  /__|_ \ |__| |____/(____  /____/__/_____ \(____  /\___  >\__|  (____  /  \______  /_____ \____/\__|  |___|  /\____/|__|_ \____/ \/\_/  
+        \/     \/                 \/              \/     \/     \/\______|    \/          \/      \/    \______|    \/            \/             ";
+            var tytulAktualizacjaCzujnikow = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulAktualizacjaCzujnikow.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+
+            AnsiConsole.Write(tytulAktualizacjaCzujnikow);
+
+            string[] aktualizacjaWybor = { "250 ms",
                     "500 ms",
                     "1 s",
                     "2 s",
                     "5 s",
                     "10 s",
-                    "Wróć"
-                })
-            ); 
+                    "Wróć" };
+            var wysrodkowane = aktualizacjaWybor.Select(s => WysrodkowanieWPoziomie(s)).ToList();
+
+            var wybor = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                //.Title("Wybór aktualizacji interwałów")
+                .PageSize(7)
+                .AddChoices(wysrodkowane)); 
             
             AnsiConsole.Clear();
-            return wybor;
+            return wybor.Trim();
         }
 
         public bool WidokPotwierdzenie()
@@ -517,44 +585,42 @@ namespace CPInfo_text.Views
             return check;
         }
 
-        public void WidokCzyszczeniaDysku()
-        {
-            var wybor = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Wybierz co chcesz zrobić:")
-                .PageSize(3)
-                .AddChoices(new[]
-                {
-                    "Oprróżnij kosz",
-                    "Wyczyść pliki tymczasowe",
-                    "Wróć"
-                })
-            );
-        }
-
         public string WidokPobireaniaSpecyfikacji()
         {
-            var wybor = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                .Title("Gdzie chcesz zapisać plik tekstowy ze specyfikacją")
-                .PageSize(6)
-                .AddChoices(new[]
-                {
-                    "Pulpit",
+            string tytul = @"   _____  .__            __                      __________             .__              
+  /     \ |__| ____     |__| ______ ____  ____   \____    /____  ______ |__| ________ __ 
+ /  \ /  \|  |/ __ \    |  |/  ___// ___\/ __ \    /     /\__  \ \____ \|  |/  ___/  |  \
+/    Y    \  \  ___/    |  |\___ \\  \__\  ___/   /     /_ / __ \|  |_> >  |\___ \|  |  /
+\____|__  /__|\___  >\__|  /____  >\___  >___  > /_______ (____  /   __/|__/____  >____/ 
+        \/        \/\______|    \/     \/    \/          \/    \/|__|           \/       ";
+            var tytulMiejsceZapisu = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulMiejsceZapisu.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+
+            AnsiConsole.Write(tytulMiejsceZapisu);
+
+            string[] miejsceZapisuWybor = { "Pulpit",
                     "Pobrane",
                     "Dokumenty",
                     "Dysk systemowy",
                     "Inne",
-                    "Wróć"
-                })
+                    "Wróć" };
+            var wysrodkowane = miejsceZapisuWybor.Select(s => WysrodkowanieWPoziomie(s)).ToList();
+
+            var wybor = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                //.Title("Gdzie chcesz zapisać plik tekstowy ze specyfikacją")
+                .PageSize(6)
+                .AddChoices(wysrodkowane)
             );
-            return wybor;
+            AnsiConsole.Clear() ;
+            return wybor.Trim();
         }
         public string WidokNazwaPliku()
         {
-            AnsiConsole.Clear();
             var nazwa = AnsiConsole.Prompt(
-                new TextPrompt<string>(@"Wprowadź nazwę pliku (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());
+                new TextPrompt<string>(@"Wprowadź nazwę pliku (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());      
             return nazwa;
         }
 
@@ -587,22 +653,11 @@ namespace CPInfo_text.Views
                     //SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
                     var task = x.AddTask("[green]Zapisuje dane[/]");
                     specyfikacjaKomputera.ZapisDoPliku(calaSciezka, task);
-                    /*using (StreamWriter streamWriter = new StreamWriter(calaSciezka))
-                    {
-                        SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
 
-                        foreach (var info in specyfikacjaKomputera.Specyfikacja)
-                        {
-                            streamWriter.WriteLine(info);
-                            task.Increment(1);
-                            Thread.Sleep(1);
-                        }
-
-                    }*/
                 });
             AnsiConsole.MarkupLine("[bold green]Zapisano![/]");
             Thread.Sleep(1000);
-
+            AnsiConsole.Clear() ;
         }
     }
 }

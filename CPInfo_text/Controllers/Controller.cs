@@ -43,7 +43,7 @@ namespace CPInfo_text.Controllers
         public void ControlerGlowneMenu()
         {
             string wyborMenuGlowne = _view.WidokGlowneMenu();
-            switch (wyborMenuGlowne.Trim())
+            switch (wyborMenuGlowne)
             {
                 case @"Ustawienia":
                     ControlerUstawienia();
