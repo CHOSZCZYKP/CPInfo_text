@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CPInfo_text.Models
@@ -58,6 +59,31 @@ namespace CPInfo_text.Models
         public static float KonwerterCelciuszNaFahrennheit(float temperaturaC)
         {
             return (float)(temperaturaC * 1.8) + 32;
+        }
+
+        public static int KonverterMilisekundy(string aktualizacjaInterwalow)
+        {
+            var regex = new Regex(@"(\d+)\s*(ms|s)", RegexOptions.IgnoreCase);
+            var dopasowanie = regex.Match(aktualizacjaInterwalow);
+
+            if (dopasowanie.Success)
+            {
+                int wartosc = int.Parse(dopasowanie.Groups[1].Value);
+                string jednostka = dopasowanie.Groups[2].Value.ToLower();
+
+                if (jednostka == "ms")
+                {
+                    return wartosc;
+                }
+                else
+                {
+                    return wartosc * 1000;
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Nieprawidłowy format: {aktualizacjaInterwalow}");
+            }
         }
     }
 }

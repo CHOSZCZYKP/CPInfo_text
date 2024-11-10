@@ -45,8 +45,7 @@ namespace CPInfo_text.Models
                     _computer.IsBatteryEnabled = true;
                     break;
             }
-            //List<CzujnikiInfo> listaCzujnikowInfo = new List<CzujnikiInfo>();
-            //_computer.Open();
+
             ListaCzujnikowInfo.Clear();
             foreach (var hardware in _computer.Hardware)
             {
@@ -74,7 +73,7 @@ namespace CPInfo_text.Models
                     
 
                     ListaCzujnikowInfo.Add(czujnikiInfo);
-                    //ListaCzujnikowInfo.Add(sensors);
+
                 }
                 foreach (var subHardware in hardware.SubHardware)
                 {
@@ -101,13 +100,12 @@ namespace CPInfo_text.Models
 
 
                         ListaCzujnikowInfo.Add(czujnikiInfo);
-                        //ListaCzujnikowInfo.Add(sensor);
+
                     }
                 }
 
             }
 
-            //return listaCzujnikowInfo;
         }
         public void Dispose()
         {
@@ -182,7 +180,5 @@ namespace CPInfo_text.Models
             _computer.IsStorageEnabled = false;
         }
 
-        
-        
     }
 }

@@ -34,12 +34,6 @@ namespace CPInfo_text.Controllers
 
         }
 
-        /*public void Start()
-        {
-            _view.TytulAplikacji();
-            ControlerGlowneMenu();
-         
-        }*/
         public void ControlerGlowneMenu()
         {
             string wyborMenuGlowne = _view.WidokGlowneMenu();
@@ -50,7 +44,6 @@ namespace CPInfo_text.Controllers
                     break;
                 case "Informacje o podzespołach":
                     ControlerWyborPodzespoluDoMonitorowania();
-                    //ControlerInformacjeOPodzespolach();
                     break;
                 case "Pobieranie specyfikacji komputera":
                     ControlerPobierzSpecyfikacjeKomputera();
@@ -63,7 +56,7 @@ namespace CPInfo_text.Controllers
                     return;
             }
         }
-        //trzeba dokończyć ustawienia bo tylko działa powrót do menu główengo
+
         public void ControlerUstawienia()
         {
             string wyborUstawienia = _view.WidokUstawienia();
@@ -97,11 +90,9 @@ namespace CPInfo_text.Controllers
             }
             else
             {
-                //ControlerInformacjeOPodzespolach(wyborPodzespolu);
-                ControlerInformacjeOPodzespolachAllData(wyborPodzespolu);
+                ControlerInformacjeOPodzespolach(wyborPodzespolu);
             }
         }
-
         
         public void ControlerWyswietlanieKolumny()
         {
@@ -129,32 +120,6 @@ namespace CPInfo_text.Controllers
             }
 
         }
-
-        /*public void ControlerWyborPodzespolowDoMonitorowania()
-        {
-            List<string> listaPodzespolowDoMonitorowania = _view.WidokWyborPodzespolowDoMonitorowania();
-            if (listaPodzespolowDoMonitorowania.Contains("Wróć") && listaPodzespolowDoMonitorowania.Count > 1)
-            {
-                bool potwierdzenie = _view.WidokPotwierdzenie();
-                if (potwierdzenie.Equals(false))
-                {
-                    ControlerWyborPodzespolowDoMonitorowania();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else if (listaPodzespolowDoMonitorowania.Contains("Wróć") && listaPodzespolowDoMonitorowania.Count == 1)
-            {
-                return;
-            }
-            else
-            {
-                PodzespolyDoMonitorowania.Clear();
-                PodzespolyDoMonitorowania = listaPodzespolowDoMonitorowania;
-            }
-        }*/
 
         public void ControlerJednostkaTemperatury()
         {
@@ -191,70 +156,14 @@ namespace CPInfo_text.Controllers
             }
         }
 
-        /*public void ControlerInformacjeOPodzespolach()
-        {
-            //while (true)
-            //{
-                AnsiConsole.Clear();
-                List<CzujnikiInfo> listaCzujnikowInfo = _model.DaneCzujnikow();
-                _view.WidokInformacjiOPodzespolach(listaCzujnikowInfo);
-            Console.ReadKey();
-                //Thread.Sleep(KonverterMilisekundy());
-                
-                
-            //}
-            //_model.Dispose();
-        }*/
-        /*public void ControlerInformacjeOPodzespolach()
-        {
-            _model.DaneCzujnikow();
-            _view.TworzenieTabeli(_model.ListaCzujnikowInfo);
-             bool _wyswietlaniePodzespolow = true;
-
-            while (_wyswietlaniePodzespolow)
-            {
-                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Enter)  
-                {
-                    _wyswietlaniePodzespolow = false;
-                }
-                _model.AktualizacjaCzujnikow();
-                _view.AktualizacjaTabeli(_model.ListaCzujnikowInfo);
-                _view.WyswietlenieTabeli();
-                Thread.Sleep(1000);
-            }
-            _model.Dispose();
-        }*/
-        /*public void ControlerInformacjeOPodzespolach(string wyborPodzespolu)
-        {
-            _model.DaneCzujnikow(wyborPodzespolu);
-            _view.TworzenieTabeli();
-            _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo, JednostkaTemperatury);
-            int czasOdswiezania = KonverterMilisekundy();
-            bool wyjscieDoMenu = _view.WyswietlenieTabeli(_model, czasOdswiezania);
-            //_model.Dispose();
-            if (wyjscieDoMenu)
-            {
-                _model.WylaczenieWszystkichPodzespolow();
-                ControlerGlowneMenu();
-            }
-        }*/
-
-        public void ControlerInformacjeOPodzespolachAllData(string wyborPodzespolu)
+        public void ControlerInformacjeOPodzespolach(string wyborPodzespolu)
         {
             _model.DaneCzujnikow(wyborPodzespolu, JednostkaTemperatury);
-            _view.TworzenieTabeliAllData(KolumnyWyswietlane);
+            _view.TworzenieTabeli(KolumnyWyswietlane);
 
-            /*foreach (var sensor in _model.ListaCzujnikowInfo)
-            {
-                if (sensor.SensorType == LibreHardwareMonitor.Hardware.SensorType.Temperature)
-                {   
-                    //sensor.Value = HelperKonwerter.KonwerterCelciuszNaFahrennheit(sensor.Value.GetValueOrDefault());
-                }
-            }*/
-
-            _view.InicjalizacjaTabeliAllData(_model.ListaCzujnikowInfo, KolumnyWyswietlane, JednostkaTemperatury);
-            int czasOdswiezania = KonverterMilisekundy();
-            bool wyjscieDoMenu = _view.WyswietlanieTabeliAllData(_model, czasOdswiezania, KolumnyWyswietlane, JednostkaTemperatury);//, JednostkaTemperatury
+            _view.InicjalizacjaTabeli(_model.ListaCzujnikowInfo, KolumnyWyswietlane, JednostkaTemperatury);
+            int czasOdswiezania = HelperKonwerter.KonverterMilisekundy(AktualizacjaInterwalow);
+            bool wyjscieDoMenu = _view.WyswietlanieTabeli(_model, czasOdswiezania, KolumnyWyswietlane, JednostkaTemperatury);
             if (wyjscieDoMenu)
             {
                 _model.WylaczenieWszystkichPodzespolow();
@@ -406,31 +315,6 @@ namespace CPInfo_text.Controllers
             {
                 _view.WidokKatalogNieIstnieje(sciezkaKatalogow);
                 ControlerInneMiejscePobierz();
-            }
-        }
-
-        public int KonverterMilisekundy()
-        {
-            var regex = new Regex(@"(\d+)\s*(ms|s)", RegexOptions.IgnoreCase);
-            var dopasowanie = regex.Match(AktualizacjaInterwalow);
-
-            if (dopasowanie.Success)
-            {
-                int wartosc = int.Parse(dopasowanie.Groups[1].Value);
-                string jednostka = dopasowanie.Groups[2].Value.ToLower();
-
-                if (jednostka == "ms")
-                {
-                    return wartosc;
-                }
-                else
-                {
-                    return wartosc * 1000;
-                }
-            }
-            else
-            {
-                throw new ArgumentException($"Nieprawidłowy format: {AktualizacjaInterwalow}");
             }
         }
 

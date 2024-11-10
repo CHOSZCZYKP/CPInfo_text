@@ -16,28 +16,5 @@ namespace CPInfo_text.Models
         public string Min { get; set; }
         public string Max { get; set; }
 
-        /*public string KonwerterTypuNaJednostke(SensorType sensorType)
-        {
-            switch (sensorType)
-            {
-                case SensorType.Temperature:
-                    return "Temperature";
-                case SensorType.Voltage:
-                    return "Voltage";
-                case SensorType.Load:
-                    return "Load";
-                case SensorType.Current:
-                    return "Current";
-                case SensorType.Power:
-                    return "Power";
-                case SensorType.Clock:
-                    return "Clock";
-                case SensorType.Frequency:
-                    return "Frequency";
-                
-                default:
-                    return "";
-            }
-        }*/
     }
 }
