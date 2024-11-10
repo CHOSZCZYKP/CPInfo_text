@@ -420,7 +420,7 @@ namespace CPInfo_text.Views
 
 
 
-        //tą całą metodę prawdopodobnie będę musiał przerobić i przenieść do kontrolera
+
         public void AktualizacjaTabeliAllData(List<CzujnikiInfo> czujnikiInfos, List<string> listaKolumn) //, string jednostkaTemperatury
         {
             for (int i = 0; i < czujnikiInfos.Count; i++)
