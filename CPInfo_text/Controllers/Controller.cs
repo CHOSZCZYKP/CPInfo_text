@@ -38,27 +38,27 @@ namespace CPInfo_text.Controllers
         {
             _view.TytulAplikacji();
             ControlerGlowneMenu();
-
+         
         }*/
         public void ControlerGlowneMenu()
         {
             string wyborMenuGlowne = _view.WidokGlowneMenu();
-            switch (wyborMenuGlowne.Trim())
+            switch (wyborMenuGlowne)
             {
-                case @"Ustawienia":
+                case "Ustawienia":
                     ControlerUstawienia();
                     break;
-                case @"Informacje o podzespołach":
+                case "Informacje o podzespołach":
                     ControlerWyborPodzespoluDoMonitorowania();
                     //ControlerInformacjeOPodzespolach();
                     break;
-                case @"Pobieranie specyfikacji komputera":
+                case "Pobieranie specyfikacji komputera":
                     ControlerPobierzSpecyfikacjeKomputera();
                     break;
-                case @"Informacje":
+                case "Informacje":
                     ControlerInformacjeOProgramie();
                     break;
-                case @"Wyjdź":
+                case "Wyjdź":
                     _model.Dispose();
                     return;
             }
