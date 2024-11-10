@@ -19,7 +19,7 @@ namespace CPInfo_text.Views
         private Table _table;
         private Table _tableAllData;
 
-        private void WysrodkowanieWPionie()
+        private static void WysrodkowanieWPionie()
         {
             int wysokosc = AnsiConsole.Profile.Height;
             int puteLinie = (wysokosc / 3);
@@ -269,7 +269,13 @@ namespace CPInfo_text.Views
 
         public string WidokInformacjaOProgramie()
         {
-            AnsiConsole.Write(new Rule("Informacje o programie").RuleStyle("green").Centered());
+            /*string tytul = @"___________                        _________                      __  .__    .__                 
+\__    ___/__.__.______   ____    /   _____/ ____   _____   _____/  |_|  |__ |__| ____    ____   
+  |    | <   |  |\____ \_/ __ \   \_____  \ /  _ \ /     \_/ __ \   __\  |  \|  |/    \  / ___\  
+  |    |  \___  ||  |_> >  ___/   /        (  <_> )  Y Y  \  ___/|  | |   Y  \  |   |  \/ /_/  > 
+  |____|  / ____||   __/ \___  > /_______  /\____/|__|_|  /\___  >__| |___|  /__|___|  /\___  /  
+          \/     |__|        \/          \/             \/     \/          \/        \//_____/   ";
+            AnsiConsole.Write(new Rule(tytul).RuleStyle("green").Centered());
             Table tableInfo = new Table();
             tableInfo.Border = TableBorder.Double;
             tableInfo.AddColumn("Nazwa");
@@ -278,15 +284,51 @@ namespace CPInfo_text.Views
             tableInfo.AddRow("Wersja", "1.0.0.1");
             tableInfo.AddRow("Uwagi", "W przypadku niektórych płyt głównych w laptopach program nie jest w stanie pobierać informacji o płycie głównej.");
 
-            AnsiConsole.Write(tableInfo);
-            var wybor = AnsiConsole.Prompt(
+            AnsiConsole.Write(tableInfo);*/
+            string tytul = @"________    __________                                           .__        
+\_____  \   \______   \_______  ____   ________________    _____ |__| ____  
+ /   |   \   |     ___/\_  __ \/  _ \ / ___\_  __ \__  \  /     \|  |/ __ \ 
+/    |    \  |    |     |  | \(  <_> ) /_/  >  | \// __ \|  Y Y  \  \  ___/ 
+\_______  /  |____|     |__|   \____/\___  /|__|  (____  /__|_|  /__|\___  >
+        \/                          /_____/            \/      \/        \/ ";
+
+
+            string[] InformacjeOProgramie = new string[]
+            {
+                "Nazwa programu: CPInfo_text",
+                "Wersja: 1.0.2.1",
+                "Autor: Paweł Choszczyk",
+                "Uwagi: W przypadku niektórych płyt głównych w laptopach program nie jest w stanie pobierać informacji o płycie głównej.",
+                "Zalecenia: Kolory tła, kolory czionki i rozmiar oraz wiekość okna należy dostosować do własnych preferencji wchodząc w właściowści \"Wiersza poleceń\" ",
+                "[blue]Kliknij\"Escape\" żeby wrócić do menu[/]"
+            };
+
+            var tytulMonitoringu = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
+            tytulMonitoringu.Justification = Justify.Center;
+
+            WysrodkowanieWPionie();
+            AnsiConsole.Write(tytulMonitoringu);
+            var wysrodkowane = InformacjeOProgramie.Select(s => WysrodkowanieWPoziomie(s)).ToList();
+
+            foreach (var info in wysrodkowane)
+            {
+                AnsiConsole.MarkupLine(info);
+            }
+            /*var wybor = AnsiConsole.Prompt(
                new SelectionPrompt<string>()
-               .Title(@"Kliknij ""Wróć"" jeśli chcesz wrócić do menu głównego")
+               //.Title(@"Kliknij ""Wróć"" jeśli chcesz wrócić do menu głównego")
                .AddChoices("Wróć")
-            );
+            );*/
+            while(true)
+            {
+                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
+            }
 
             AnsiConsole.Clear();
-            return wybor;
+            return "Wróć";
         }
 
         public string WidokAktualizacjaInterwalow()
@@ -568,11 +610,11 @@ namespace CPInfo_text.Views
                     if (liczbaSensorow > 0)
                     {
                         CzujnikiInfo sensor = model.ListaCzujnikowInfo.First();
-                        AnsiConsole.Markup($"[yellow]Naciśnij [bold]Q[/] aby zatrzymać wyświetlanie tabeli.[/]\n[red]{sensor.NazwaUrzadzenia ?? ""}[/]\n");
+                        AnsiConsole.Markup($"[blue]Naciśnij [bold]Escape[/] aby zatrzymać wyświetlanie tabeli.[/]\n[green]Urządzenie: {sensor.NazwaUrzadzenia ?? ""}[/]\n");
                     }
                     else
                     {
-                        AnsiConsole.Markup($"[yellow]Naciśnij [bold]Q[/] aby zatrzymać wyświetlanie tabeli.[/]\n[red]Nie wykryto urządzenia[/]\n");
+                        AnsiConsole.Markup($"[blue]Naciśnij [bold]Escape[/] aby zatrzymać wyświetlanie tabeli.[/]\n[red]Nie wykryto urządzenia[/]\n");
                     }
 
                     while (true)
@@ -582,7 +624,7 @@ namespace CPInfo_text.Views
                         AktualizacjaTabeliAllData(model.ListaCzujnikowInfo, lisaKolumn);//, jednostkaTemperatury
                         x.Refresh();
                         Thread.Sleep(czasOdswiezania);
-                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
+                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
                         {
                             AnsiConsole.Clear();
                             check = true;
@@ -628,6 +670,7 @@ namespace CPInfo_text.Views
         }
         public string WidokNazwaPliku()
         {
+            AnsiConsole.Clear();
             var nazwa = AnsiConsole.Prompt(
                 new TextPrompt<string>(@"Wprowadź nazwę pliku (lub zostaw puste i kliknij ""enter"", by wrócić): ").AllowEmpty());      
             return nazwa;
@@ -643,7 +686,7 @@ namespace CPInfo_text.Views
 
         public void WidokPlikIstnieje(string sciezka)
         {
-            AnsiConsole.Markup($"Istaniej plik o nazwie: {sciezka}\nKliknij jakiś przycisk aby przejść dalej");
+            AnsiConsole.Markup($"Istaniej plik o nazwie: {sciezka} Wymyśl inną nazwę\nKliknij jakiś przycisk aby przejść dalej");
             Console.ReadKey();
         }
 
