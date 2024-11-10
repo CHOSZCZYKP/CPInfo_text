@@ -137,7 +137,7 @@ namespace CPInfo_text.Models
                                         }
                                     }
                                 }
-                                computer.Close();
+                                //computer.Close();
                             }
                             else
                             {

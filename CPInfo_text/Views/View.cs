@@ -687,13 +687,13 @@ namespace CPInfo_text.Views
 
         public void WidokPlikIstnieje(string sciezka)
         {
-            AnsiConsole.Markup($"Istaniej plik o nazwie: {sciezka} Wymyśl inną nazwę\nKliknij jakiś przycisk aby przejść dalej");
+            AnsiConsole.Markup($"[red]Istaniej plik o nazwie: \"{sciezka}\". Wymyśl inną nazwę[/]\nKliknij jakiś przycisk aby przejść dalej.");
             Console.ReadKey();
         }
 
         public void WidokKatalogNieIstnieje(string sciezka)
         {
-            AnsiConsole.Markup($"Nie istnieje taka ścieżka do katalogów {sciezka}\nKliknij jakiś przycisk aby przejść dalej");
+            AnsiConsole.Markup($"[red]Nie istnieje taka ścieżka do katalogów \"{sciezka}\".[/]\nKliknij jakiś przycisk aby przejść dalej");
             Console.ReadKey();
         }
 
