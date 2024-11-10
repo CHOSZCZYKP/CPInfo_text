@@ -172,6 +172,7 @@ namespace CPInfo_text.Views
 
         public string WidokTemperatur()
         {
+
             string tytul = @"___________                                        __                       
 \__    ___/___   _____ ______   ________________ _/  |_ __ ______________   
   |    |_/ __ \ /     \\____ \_/ __ \_  __ \__  \\   __\  |  \_  __ \__  \  
@@ -180,8 +181,17 @@ namespace CPInfo_text.Views
              \/      \/|__|        \/           \/                       \/ ";
             var tytulAplikacji = new Text($"{tytul}", new Style(foreground: Color.Blue, decoration: Decoration.Bold));
             tytulAplikacji.Justification = Justify.Center;
-            AnsiConsole.Write(tytulAplikacji);
+            
+            int wysokoscKonsoli = AnsiConsole.Profile.Height;
+            int liczbaLiniiTytulu = tytul.Split('\n').Length;
+            int pusteLinie = (wysokoscKonsoli / 3) - (liczbaLiniiTytulu / 2);
 
+            // Dodajemy puste wiersze przed tytułem, by go wyśrodkować pionowo
+            for (int i = 0; i < pusteLinie; i++)
+            {
+                AnsiConsole.WriteLine();
+            }
+            AnsiConsole.Write(tytulAplikacji);
             int szerokosc = AnsiConsole.Profile.Width;
             string[] strings = { "Stopnie Celciusza", "Stopnie Farenheita", "Wróć" };
             var centred = strings.Select(s => WysrodkujTekst(s, szerokosc)).ToList();
