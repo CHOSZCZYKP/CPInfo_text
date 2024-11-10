@@ -38,7 +38,7 @@ namespace CPInfo_text.Controllers
         {
             _view.TytulAplikacji();
             ControlerGlowneMenu();
-
+         
         }*/
         public void ControlerGlowneMenu()
         {
