@@ -300,7 +300,7 @@ namespace CPInfo_text.Controllers
             string sciezkaKatalogow = Path.GetDirectoryName(calaSciezka);
             if (Directory.Exists(sciezkaKatalogow))
             {
-                if (!File.Exists(calaSciezka))
+                if (!File.Exists(calaSciezkaZRozszerzeniem))
                 {
                     SpecyfikacjaKomputera specyfikacjaKomputera = new SpecyfikacjaKomputera();
                     _view.WidokProgressBar(calaSciezkaZRozszerzeniem, specyfikacjaKomputera);
